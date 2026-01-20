@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.function.Predicate;
 
 @Getter
-@ToString
 @Builder
 public class Course {
 
@@ -22,7 +21,7 @@ public class Course {
     private final int numberOfListeners;
 
     public Course(Day day, Time startTime, Time endTime, String name, Room room, String presenterName, int numberOfListeners) {
-        if ( numberOfListeners > room.capacity() )
+        if ( numberOfListeners > room.getCapacity() )
             throw new IllegalArgumentException("Number of listeners cannot be more than room capacity.");
         this.day = day;
         this.startTime = startTime;
@@ -114,5 +113,16 @@ public class Course {
         return this.startsBefore(other) && this.endsBeforeStartOf(other);
     }
 
-
+    @Override
+    public String toString() {
+        return "Course{" +
+                "day=" + day.getName() +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", name='" + name + '\'' +
+                ", room=" + room +
+                ", presenterName='" + presenterName + '\'' +
+                ", numberOfListeners=" + numberOfListeners +
+                '}';
+    }
 }

@@ -14,6 +14,14 @@ public class Time implements Comparable<Time> {
     private final int hour;
     private final int minute;
 
+    public boolean isLaterThan(Time time) {
+        return this.compareTo(time) > 0;
+    }
+
+    public boolean isEarlierThan(Time time) {
+        return this.compareTo(time) < 0;
+    }
+
     public Time plus(int hour, int minute) {
         int newHour = this.hour + hour;
         int newMinute = this.minute + minute;

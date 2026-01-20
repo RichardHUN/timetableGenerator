@@ -1,6 +1,7 @@
 package hu.unideb.inf.timetableGenerator.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -10,7 +11,12 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @ToString
-public class Day {
+@Builder(toBuilder = true)
+public class Day implements Cloneable {
+    /**
+     * Contains the name of the day and the available time windows in that day,
+     * represented as a {@link Week} object.
+     */
 
     private final String name;
     /**
@@ -33,4 +39,29 @@ public class Day {
         this.availableWindows = List.of(Time.from8To20());
     }
 
+    public void occupyTime(Time startTime, Time endTime) {
+        for( Time time = startTime; time.isEarlierThan(endTime); time = time.plus(1, 0) ) {
+            for( int i = 0; i < availableWindows.size(); i++ ) {
+                LinkedList<Time> timeWindow = availableWindows.get(i);
+                if( timeWindow.contains(time) ) {
+                    timeWindow.remove(time);
+                    availableWindows.set(i, timeWindow);
+                    break;
+                }
+            }
+        }
+    }
+
+    @Override
+    public Day clone() {
+        try {
+            Day clone = (Day) super.clone();
+            clone.availableWindows = this.availableWindows.stream()
+                    .map(LinkedList::new)
+                    .toList();
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 }

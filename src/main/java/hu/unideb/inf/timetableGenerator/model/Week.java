@@ -1,18 +1,16 @@
 package hu.unideb.inf.timetableGenerator.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
 @Getter
+@Setter
 @ToString
 @Builder(toBuilder = true)
-public class Week {
+public class Week implements Cloneable {
 
     private List<Day> days;
 
@@ -29,6 +27,35 @@ public class Week {
         days.add(new Day("Thursday"));
         days.add(new Day("Friday"));
         this.days = days;
+    }
+
+    public void occupyTime(Day day, Time startTime, Time endTime) {
+        if( days.stream().noneMatch(d -> d.getName().equals(day.getName())) ) {
+            throw new IllegalArgumentException("There is no day in the given week called " + day.getName());
+        }
+        for (Day d : days) {
+            Day oldD = d.clone();
+            if (d.getName().equals(day.getName())) {
+                d.occupyTime(startTime, endTime);
+                days.set(days.indexOf(oldD), d);
+                return;
+            }
+        }
+    }
+
+    @Override
+    public Week clone() {
+        try {
+            Week clone = (Week) super.clone();
+            List<Day> newDays = new ArrayList<>();
+            for (Day d : this.days) {
+                newDays.add(d.clone());
+            }
+            clone.setDays(newDays);
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
