@@ -1,9 +1,6 @@
 package hu.unideb.inf.timetableGenerator.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -11,6 +8,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @ToString
+@EqualsAndHashCode
 @Builder(toBuilder = true)
 public class Day implements Cloneable {
     /**
@@ -36,7 +34,8 @@ public class Day implements Cloneable {
      */
     public Day(String name) {
         this.name = name;
-        this.availableWindows = List.of(Time.from8To20());
+        this.availableWindows = new java.util.ArrayList<>();
+        this.availableWindows.add(Time.from8To20());
     }
 
     public void occupyTime(Time startTime, Time endTime) {
@@ -58,7 +57,7 @@ public class Day implements Cloneable {
             Day clone = (Day) super.clone();
             clone.availableWindows = this.availableWindows.stream()
                     .map(LinkedList::new)
-                    .toList();
+                    .collect(java.util.stream.Collectors.toCollection(java.util.ArrayList::new));
             return clone;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();

@@ -1,5 +1,7 @@
 package hu.unideb.inf.timetableGenerator.model;
 
+import lombok.Getter;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
@@ -21,11 +23,11 @@ import java.util.stream.Collectors;
  *     <li>{@code "James Doe:noClassesAfter:15:00"}</li>
  *     <li>{@code "Jane Doe:noClassesOnDay:Friday"}</li>
  * </ul>
- * @since 2025.XII.17
  */
 public class Preference implements Predicate<List<Course>> {
 
     private final Predicate<List<Course>> constraint;
+    @Getter
     private final Integer strictness;
     private String toString;
 

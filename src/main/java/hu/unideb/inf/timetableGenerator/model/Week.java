@@ -34,10 +34,10 @@ public class Week implements Cloneable {
             throw new IllegalArgumentException("There is no day in the given week called " + day.getName());
         }
         for (Day d : days) {
-            Day oldD = d.clone();
             if (d.getName().equals(day.getName())) {
+                int dayIndex = days.indexOf(d);
                 d.occupyTime(startTime, endTime);
-                days.set(days.indexOf(oldD), d);
+                days.set(dayIndex, d);
                 return;
             }
         }

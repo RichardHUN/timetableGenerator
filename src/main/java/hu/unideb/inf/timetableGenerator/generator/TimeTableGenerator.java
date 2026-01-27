@@ -2,142 +2,207 @@ package hu.unideb.inf.timetableGenerator.generator;
 
 import hu.unideb.inf.timetableGenerator.model.*;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.Comparator;
 import java.util.List;
 
+@Slf4j
 public class TimeTableGenerator {
 
-    private final List<Course> courses = new ArrayList<>();
+    private static final int MAX_SOLUTIONS = 100;
+    private int solutionsFound = 0;
 
     public OutputDTO generate(@NonNull InputDTO input) {
-        final Course.noCollisions collisionsChecker = new Course.noCollisions();
+        log.info("Starting timetable generation with preference-based scoring");
 
-        //TODO: move these into PlannedCourse
-        final int COURSE_DURATION_HOURS = 1;
-        final int COURSE_DURATION_MINUTES = 40;
+        List<SolutionCandidate> candidates = new ArrayList<>();
 
-        List<PlannedCourse> plannedCourses = input.getPlannedCourses();
-        //TODO: implement preferences handling
-        List<Preference> preferences = input.getPreferences();
-        List<Room> rooms = input.getRooms();
-        Week week = input.getWeek();
+        generateCandidates(input, new ArrayList<>(), candidates);
 
-        PlannedCourse lastPlannedCourse = null;
-        Course course;
-        for( PlannedCourse plannedCourse: plannedCourses ) {
-            lastPlannedCourse = plannedCourse;
-            for( Day day: week.getDays() ) {
-                for( List<Time> timeWindow: day.getAvailableWindows() ) {
-                    for( Time startTime: timeWindow ) {
-                        for( Room room: rooms ) {
-                            //System.out.println(room);
-                            Room oldRoom = room.clone();
-
-                            if( plannedCourse.numberOfListeners() > room.getCapacity() ) {
-                                continue;
-                            }
-
-                            if( room.getWeek().getDays().stream().noneMatch(d -> d.getName().equals(day.getName())) ){
-                                continue;
-                            }
-
-                            /*if( !collisionsChecker.test(courses) ) {
-                                continue;
-                            }*/
-
-                            //VALAMIVEL E FÖLÖTT VAN A BAJ, ELTŰNIK A VÁLTOZTATÁS
-                            for( Day roomDay: room.getWeek().getDays() ) {
-                                if( !roomDay.getName().equals(day.getName()) ) {
-                                    continue;
-                                }
-                                System.out.println(roomDay);
-                                for( List<Time> roomTimeWindow: roomDay.getAvailableWindows() ) {
-                                    if( !roomTimeWindow.contains(startTime) ) {
-                                        continue;
-                                    }
-
-                                    //VALAMIVEL E FÖLÖTT VAN A BAJ, ELTŰNIK A VÁLTOZTATÁS
-                                    //System.out.printf("%s is open on %s\n", roomTimeWindow, startTime);
-
-                                    //System.out.println("Found good time: " + startTime);
-                                    //System.out.println(roomDay);
-
-                                    Time endTime = startTime.plus(COURSE_DURATION_HOURS, COURSE_DURATION_MINUTES);
-
-                                    //System.out.println("Before: " + room.getWeek());
-                                    room.occupy(roomDay, startTime, endTime);
-                                    //System.out.println("After(" + startTime + "-" + endTime + "): " + room.getWeek());
-
-                                    //TODO: remove empty TimeWindows in Day objects
-                                    course = Course.builder()
-                                            .day(roomDay)
-                                            .startTime(startTime)
-                                            .endTime(endTime)
-                                            .presenterName(plannedCourse.presenterName())
-                                            .name(plannedCourse.name())
-                                            .room(room)
-                                            .numberOfListeners(plannedCourse.numberOfListeners())
-                                            .build();
-
-                                    courses.add(course);
-                                    plannedCourses.remove(plannedCourse);
-                                    rooms.set(rooms.indexOf(oldRoom), room);
-                                    //System.out.println(rooms);
-                                    //week.setDays(removeAffectedTimeWindows(week, day, startTime, endTime));
-
-                                    input = input.toBuilder()
-                                            .plannedCourses(plannedCourses)
-                                            .rooms(rooms)
-                                            .build();
-
-                                    if(plannedCourses.isEmpty()) {
-                                        return new OutputDTO(week, courses);
-                                    }
-
-                                    return generate(
-                                            input
-                                    );
-
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        if (candidates.isEmpty()) {
+            log.error("Failed to generate any valid timetable");
+            throw new IllegalStateException("Failed to generate timetable");
         }
 
-        throw new IllegalStateException("Couldn't put " + lastPlannedCourse + " into timetable.");
+        SolutionCandidate best = candidates.stream()
+            .min(Comparator.comparingInt(SolutionCandidate::score))
+            .orElseThrow();
+
+        log.info("Timetable generation successful. Found {} candidates, best score: {}",
+                 candidates.size(), best.score());
+
+        List<Course> coursesWithFinalRoomStates = rebuildCoursesWithFinalRoomStates(best.courses(), input.getRooms());
+
+        return new OutputDTO(input.getWeek(), coursesWithFinalRoomStates);
     }
 
-    /*private List<Day> removeAffectedTimeWindows(Week week, Day day, Time startTime, Time endTime) {
-        List<Day> updatedDays = new ArrayList<>();
-        for (int i = 0; i < week.getDays().size(); i++) {
-            if (week.getDays().get(i).equals(day)) {
-                List<LinkedList<Time>> availableWindows = day.getAvailableWindows();
-                List<LinkedList<Time>> updatedWindows = new ArrayList<>();
+    private void generateCandidates(@NonNull InputDTO input, List<Course> currentCourses, List<SolutionCandidate> candidates) {
+        if (solutionsFound >= MAX_SOLUTIONS) {
+            return;
+        }
 
-                for (LinkedList<Time> window: availableWindows) {
-                    LinkedList<Time> updatedWindow = new LinkedList<>();
-                    for (Time time: window) {
-                        if (time.isEarlierThan(startTime) || time.isLaterThan(endTime)) {
-                            updatedWindow.add(time);
+        final Course.noCollisions collisionsChecker = new Course.noCollisions();
+
+        Week week = input.getWeek();
+        List<Room> rooms = new ArrayList<>(input.getRooms());
+        List<PlannedCourse> plannedCourses = new ArrayList<>(input.getPlannedCourses());
+        List<Preference> preferences = input.getPreferences();
+
+
+        if (plannedCourses.isEmpty()) {
+            int score = scoreSolution(currentCourses, preferences);
+            candidates.add(new SolutionCandidate(new ArrayList<>(currentCourses), score));
+            solutionsFound++;
+            log.debug("Found solution #{} with score: {}", solutionsFound, score);
+            return;
+        }
+
+
+        PlannedCourse plannedCourse = plannedCourses.getFirst();
+
+        for (Day day : week.getDays()) {
+            for (List<Time> timeWindow : day.getAvailableWindows()) {
+                for (Time startTime : timeWindow) {
+                    for (Room room : rooms) {
+
+                        if (plannedCourse.numberOfListeners() > room.getCapacity()) {
+                            continue;
+                        }
+
+                        if (room.getWeek().getDays().stream().noneMatch(d -> d.getName().equals(day.getName()))) {
+                            continue;
+                        }
+
+                        for (Day roomDay : room.getWeek().getDays()) {
+                            if (!roomDay.getName().equals(day.getName())) {
+                                continue;
+                            }
+
+                            for (List<Time> roomTimeWindow : roomDay.getAvailableWindows()) {
+                                if (!roomTimeWindow.contains(startTime)) {
+                                    continue;
+                                }
+
+                                Time endTime = startTime.plus(plannedCourse.durationsHours(), plannedCourse.durationMinutes());
+
+                                Room roomCopy = room.clone();
+                                roomCopy.occupy(roomDay, startTime, endTime);
+
+                                Day updatedRoomDay = roomCopy.getWeek().getDays().stream()
+                                        .filter(d -> d.getName().equals(roomDay.getName()))
+                                        .findFirst()
+                                        .orElseThrow();
+
+                                Course course = Course.builder()
+                                        .day(updatedRoomDay)
+                                        .startTime(startTime)
+                                        .endTime(endTime)
+                                        .presenterName(plannedCourse.presenterName())
+                                        .name(plannedCourse.name())
+                                        .room(roomCopy)
+                                        .numberOfListeners(plannedCourse.numberOfListeners())
+                                        .build();
+
+                                List<Course> newCourses = new ArrayList<>(currentCourses);
+                                newCourses.add(course);
+
+                                if (!collisionsChecker.test(newCourses)) {
+                                    continue;
+                                }
+
+                                boolean violatesHighStrictnessPreference = false;
+                                for (Preference preference : preferences) {
+                                    if (preference.getStrictness() >= 5 && !preference.test(newCourses)) {
+                                        violatesHighStrictnessPreference = true;
+                                        break;
+                                    }
+                                }
+
+                                if (violatesHighStrictnessPreference) {
+                                    if (solutionsFound >= 10) {
+                                        continue;
+                                    }
+                                }
+
+                                List<PlannedCourse> remainingPlanned = new ArrayList<>(plannedCourses);
+                                remainingPlanned.removeFirst();
+
+                                List<Room> updatedRooms = new ArrayList<>(rooms);
+                                int roomIndex = updatedRooms.indexOf(room);
+                                updatedRooms.set(roomIndex, roomCopy);
+
+                                InputDTO newInput = input.toBuilder()
+                                        .plannedCourses(remainingPlanned)
+                                        .rooms(updatedRooms)
+                                        .build();
+
+                                generateCandidates(newInput, newCourses, candidates);
+
+                                if (solutionsFound >= MAX_SOLUTIONS) {
+                                    return;
+                                }
+                            }
                         }
                     }
-                    if (!updatedWindow.isEmpty()) {
-                        updatedWindows.add(updatedWindow);
-                    }
                 }
-                Day updatedDay = day.toBuilder()
-                        .availableWindows(updatedWindows)
-                        .build();
-                updatedDays.add(updatedDay);
-                continue;
             }
-            updatedDays.add(week.getDays().get(i));
         }
-        return updatedDays;
-    }*/
+    }
 
+    private int scoreSolution(List<Course> courses, List<Preference> preferences) {
+        int score = 0;
+        for (Preference preference : preferences) {
+            if (!preference.test(courses)) {
+                score += preference.getStrictness();
+            }
+        }
+        return score;
+    }
+
+    private List<Course> rebuildCoursesWithFinalRoomStates(List<Course> courses, List<Room> initialRooms) {
+        List<Room> finalRooms = initialRooms.stream()
+                .map(Room::clone)
+                .toList();
+
+        for (Course course : courses) {
+            Room room = finalRooms.stream()
+                    .filter(r -> r.getRoomNumber().equals(course.getRoom().getRoomNumber()))
+                    .findFirst()
+                    .orElseThrow();
+
+            room.occupy(course.getDay(), course.getStartTime(), course.getEndTime());
+        }
+
+        List<Course> rebuiltCourses = new ArrayList<>();
+        for (Course course : courses) {
+            Room finalRoom = finalRooms.stream()
+                    .filter(r -> r.getRoomNumber().equals(course.getRoom().getRoomNumber()))
+                    .findFirst()
+                    .orElseThrow();
+
+            Day finalDay = finalRoom.getWeek().getDays().stream()
+                    .filter(d -> d.getName().equals(course.getDay().getName()))
+                    .findFirst()
+                    .orElseThrow();
+
+            Course rebuiltCourse = Course.builder()
+                    .day(finalDay)
+                    .startTime(course.getStartTime())
+                    .endTime(course.getEndTime())
+                    .presenterName(course.getPresenterName())
+                    .name(course.getName())
+                    .room(finalRoom)
+                    .numberOfListeners(course.getNumberOfListeners())
+                    .build();
+
+            rebuiltCourses.add(rebuiltCourse);
+        }
+
+        return rebuiltCourses;
+    }
+
+    private record SolutionCandidate(List<Course> courses, int score) {
+    }
 }
