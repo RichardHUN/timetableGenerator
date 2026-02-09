@@ -1,19 +1,18 @@
 package hu.unideb.inf.timetableGenerator.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.List;
 
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-@Getter
+@Data
 public class InputDTO {
 
-    private final Week week;
-    private final List<Room> rooms;
-    private final List<PlannedCourse> plannedCourses;
-    private final List<Preference> preferences;
+    private Week week;
+    private List<Room> rooms;
+    private List<PlannedCourse> plannedCourses;
+    private List<Preference> preferences;
 
 }

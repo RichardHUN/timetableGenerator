@@ -1,5 +1,6 @@
 package hu.unideb.inf.timetableGenerator.runner;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import hu.unideb.inf.timetableGenerator.generator.TimeTableGenerator;
 import hu.unideb.inf.timetableGenerator.model.*;
 import hu.unideb.inf.timetableGenerator.runner.parser.ArgParser;
@@ -75,12 +76,21 @@ public class MainFile implements Main {
         if(rooms.isEmpty() || courses.isEmpty() || week.getDays().isEmpty() || preferences.isEmpty()) {
             throw new IllegalStateException("Main not run before trying to get results.");
         }
-        return generator.generate(InputDTO.builder()
-                        .week(week)
-                        .rooms(rooms)
-                        .plannedCourses(courses)
-                        .preferences(preferences)
-                        .build());
+        InputDTO input = InputDTO.builder()
+                .week(week)
+                .rooms(rooms)
+                .plannedCourses(courses)
+                .preferences(preferences)
+                .build();
+        //TODO: remove
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(input);
+            System.out.println(json);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return generator.generate(input);
     }
 
     @Override

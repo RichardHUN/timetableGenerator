@@ -7,12 +7,13 @@ import java.util.LinkedList;
 import java.util.Objects;
 
 @AllArgsConstructor
-@Getter
+@NoArgsConstructor
+@Data
 @Builder(toBuilder = true)
 public class Time implements Comparable<Time> {
 
-    private final int hour;
-    private final int minute;
+    private int hour;
+    private int minute;
 
     public boolean isLaterThan(Time time) {
         return this.compareTo(time) > 0;

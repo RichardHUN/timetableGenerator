@@ -6,8 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
 @ToString
 @Builder(toBuilder = true)
 public class Week implements Cloneable {

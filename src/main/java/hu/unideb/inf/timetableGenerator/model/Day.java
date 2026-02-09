@@ -6,7 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 @AllArgsConstructor
-@Getter
+@NoArgsConstructor
+@Data
 @ToString
 @EqualsAndHashCode
 @Builder(toBuilder = true)
@@ -16,7 +17,7 @@ public class Day implements Cloneable {
      * represented as a {@link Week} object.
      */
 
-    private final String name;
+    private String name;
     /**
      * Each linked list represents a continuous available time window.
      * If there is a break in the availability, a new linked list is started.

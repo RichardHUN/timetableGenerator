@@ -4,14 +4,14 @@ import lombok.*;
 
 import java.util.Objects;
 
-@Getter
-@Setter
+@Data
 @ToString
 @Builder(toBuilder = true)
+@NoArgsConstructor
 @AllArgsConstructor
 public class Room {
-    private final String roomNumber;
-    private final int capacity;
+    private String roomNumber;
+    private int capacity;
     /**
      * Each linked list represents a continuous available time window.
      * If there is a break in the availability, a new linked list is started.
@@ -21,7 +21,7 @@ public class Room {
      * - First linked list: 8:00, 9:00, 10:00, 11:00
      * - Second linked list: 13:00, 14:00, 15:00, ..., 20:00
      */
-    private final Week week;
+    private Week week;
 
     /**
      * Constructs a basic {@link Room} with a basic {@link Week}.
