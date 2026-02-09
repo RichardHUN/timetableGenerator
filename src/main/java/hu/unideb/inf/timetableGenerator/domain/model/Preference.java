@@ -32,10 +32,10 @@ public class Preference implements Predicate<List<Course>> {
 
     private Predicate<List<Course>> constraint;
     private Integer strictness;
-    private String toString;
     private String presenterName;
     private String constraintName;
     private String[] params;
+    private String toString;
 
     @Override
     public boolean test(List<Course> courses) {
@@ -68,7 +68,7 @@ public class Preference implements Predicate<List<Course>> {
 
         constr = ConstraintTypes.getPredicate(constraintType, presenterName, remaining);
 
-        return new Preference(constr, strictness, toString, presenterName, constraintName, remaining);
+        return new Preference(constr, strictness, presenterName, constraintName, remaining, toString);
     }
 
     private static boolean isValidConstraintName(String string) {

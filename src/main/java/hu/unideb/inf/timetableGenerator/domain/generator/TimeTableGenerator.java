@@ -1,6 +1,8 @@
 package hu.unideb.inf.timetableGenerator.domain.generator;
 
 import hu.unideb.inf.timetableGenerator.domain.model.*;
+import hu.unideb.inf.timetableGenerator.dto.InputDTO;
+import hu.unideb.inf.timetableGenerator.dto.OutputDTO;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,7 +24,7 @@ public class TimeTableGenerator {
         generateCandidates(input, new ArrayList<>(), candidates);
 
         if (candidates.isEmpty()) {
-            log.error("Failed to generate any valid timetable");
+            log.error("Failed to generate any valid timetable in {} attempts.", MAX_SOLUTIONS);
             throw new IllegalStateException("Failed to generate timetable");
         }
 

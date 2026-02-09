@@ -4,15 +4,15 @@ import hu.unideb.inf.timetableGenerator.domain.generator.TimeTableGenerator;
 import hu.unideb.inf.timetableGenerator.domain.model.*;
 import hu.unideb.inf.timetableGenerator.domain.runner.parser.ArgParser;
 import hu.unideb.inf.timetableGenerator.domain.runner.parser.RoomArgParser;
+import hu.unideb.inf.timetableGenerator.domain.runner.utils.ResourceFileParser;
+import hu.unideb.inf.timetableGenerator.dto.InputDTO;
+import hu.unideb.inf.timetableGenerator.dto.OutputDTO;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
 import java.util.*;
 
 @Getter
@@ -48,23 +48,15 @@ public class MainFile implements Main {
     }
 
     private static Result setup() throws URISyntaxException, IOException {
-        String resourceFileName = FILE_NAME;
-        ClassLoader classLoader = MainFile.class.getClassLoader();
-        URL resourceUrl = classLoader.getResource(resourceFileName);
-
-        if (resourceUrl == null) {
-            throw new RuntimeException("Resource file not found: " + resourceFileName);
-        }
-
-        File file = new File(resourceUrl.toURI());
         MainFile mainFile = new MainFile();
 
-        String fileContents = Files.readString(file.toPath());
+        String fileContents = ResourceFileParser.parseResourceFile(FILE_NAME);
         String[] fileArgs = Arrays.stream(
                 fileContents
                 .split(System.lineSeparator()))
                 .map(str -> str.replace("\"",""))
                 .toArray(String[]::new);
+
         return new Result(mainFile, fileArgs);
     }
 

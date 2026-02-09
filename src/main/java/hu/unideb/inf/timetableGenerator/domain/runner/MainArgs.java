@@ -4,6 +4,8 @@ import hu.unideb.inf.timetableGenerator.domain.generator.TimeTableGenerator;
 import hu.unideb.inf.timetableGenerator.domain.model.*;
 import hu.unideb.inf.timetableGenerator.domain.runner.parser.ArgParser;
 import hu.unideb.inf.timetableGenerator.domain.runner.parser.RoomArgParser;
+import hu.unideb.inf.timetableGenerator.dto.InputDTO;
+import hu.unideb.inf.timetableGenerator.dto.OutputDTO;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;

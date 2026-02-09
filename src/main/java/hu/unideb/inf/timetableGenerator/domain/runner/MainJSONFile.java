@@ -1,20 +1,18 @@
 package hu.unideb.inf.timetableGenerator.domain.runner;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import hu.unideb.inf.timetableGenerator.domain.generator.TimeTableGenerator;
 import hu.unideb.inf.timetableGenerator.domain.model.*;
 import hu.unideb.inf.timetableGenerator.domain.runner.parser.ArgParser;
+import hu.unideb.inf.timetableGenerator.domain.runner.utils.ResourceFileParser;
+import hu.unideb.inf.timetableGenerator.dto.InputDTO;
+import hu.unideb.inf.timetableGenerator.dto.OutputDTO;
 import lombok.Data;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
 import java.util.List;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Loads {@code input.json} from the resources folder, reads the
@@ -40,32 +38,21 @@ public class MainJSONFile implements Main {
 
     public static void main(String[] args) {
         MainJSONFile mainJSONFile = new MainJSONFile();
-        try {
-            mainJSONFile.setup();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("Failed to load resource file", e);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to read resource file", e);
-        }
+        mainJSONFile.setup();
 
         System.out.println(mainJSONFile.getResult());
     }
 
-    private void setup() throws URISyntaxException, IOException {
-        String resourceFileName = FILE_NAME;
-        ClassLoader classLoader = MainJSONFile.class.getClassLoader();
-        URL resourceUrl = classLoader.getResource(resourceFileName);
-
-        if (resourceUrl == null) {
-            throw new RuntimeException("Resource file not found: " + resourceFileName);
-        }
-
-        File file = new File(resourceUrl.toURI());
-
-        String content = Files.readString(file.toPath());
+    private void setup(){
+        String content = ResourceFileParser.parseResourceFile(FILE_NAME);
         ObjectMapper mapper = new ObjectMapper();
 
-        inputDTO = mapper.readValue(content, InputDTO.class);
+        try {
+            inputDTO = mapper.readValue(content, InputDTO.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
         this.setWeek(inputDTO.getWeek());
         this.setRooms(inputDTO.getRooms());
         this.setCourses(inputDTO.getPlannedCourses());

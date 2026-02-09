@@ -3,6 +3,8 @@ package hu.unideb.inf.timetableGenerator.domain.runner;
 import hu.unideb.inf.timetableGenerator.domain.generator.TimeTableGenerator;
 import hu.unideb.inf.timetableGenerator.domain.model.*;
 import hu.unideb.inf.timetableGenerator.domain.runner.parser.ArgParser;
+import hu.unideb.inf.timetableGenerator.dto.InputDTO;
+import hu.unideb.inf.timetableGenerator.dto.OutputDTO;
 
 import java.util.List;
 
