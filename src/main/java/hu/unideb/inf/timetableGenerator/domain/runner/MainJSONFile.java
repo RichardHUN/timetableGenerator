@@ -1,8 +1,8 @@
-package hu.unideb.inf.timetableGenerator.runner;
+package hu.unideb.inf.timetableGenerator.domain.runner;
 
-import hu.unideb.inf.timetableGenerator.generator.TimeTableGenerator;
-import hu.unideb.inf.timetableGenerator.model.*;
-import hu.unideb.inf.timetableGenerator.runner.parser.ArgParser;
+import hu.unideb.inf.timetableGenerator.domain.generator.TimeTableGenerator;
+import hu.unideb.inf.timetableGenerator.domain.model.*;
+import hu.unideb.inf.timetableGenerator.domain.runner.parser.ArgParser;
 import lombok.Data;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 @Log4j2
 @Data
-public class MainJSON implements Main {
+public class MainJSONFile implements Main {
 
     private static final String FILE_NAME = "input.json";
 
@@ -39,21 +39,21 @@ public class MainJSON implements Main {
     private InputDTO inputDTO;
 
     public static void main(String[] args) {
-        MainJSON mainJSON = new MainJSON();
+        MainJSONFile mainJSONFile = new MainJSONFile();
         try {
-            mainJSON.setup();
+            mainJSONFile.setup();
         } catch (URISyntaxException e) {
             throw new RuntimeException("Failed to load resource file", e);
         } catch (IOException e) {
             throw new RuntimeException("Failed to read resource file", e);
         }
 
-        System.out.println(mainJSON.getResult());
+        System.out.println(mainJSONFile.getResult());
     }
 
     private void setup() throws URISyntaxException, IOException {
         String resourceFileName = FILE_NAME;
-        ClassLoader classLoader = MainJSON.class.getClassLoader();
+        ClassLoader classLoader = MainJSONFile.class.getClassLoader();
         URL resourceUrl = classLoader.getResource(resourceFileName);
 
         if (resourceUrl == null) {

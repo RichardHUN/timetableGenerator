@@ -1,10 +1,10 @@
-package hu.unideb.inf.timetableGenerator.runner.parser;
+package hu.unideb.inf.timetableGenerator.domain.runner.parser;
 
-import hu.unideb.inf.timetableGenerator.model.Day;
-import hu.unideb.inf.timetableGenerator.model.Room;
-import hu.unideb.inf.timetableGenerator.model.Time;
-import hu.unideb.inf.timetableGenerator.model.Week;
-import hu.unideb.inf.timetableGenerator.runner.Main;
+import hu.unideb.inf.timetableGenerator.domain.model.Day;
+import hu.unideb.inf.timetableGenerator.domain.model.Room;
+import hu.unideb.inf.timetableGenerator.domain.model.Time;
+import hu.unideb.inf.timetableGenerator.domain.model.Week;
+import hu.unideb.inf.timetableGenerator.domain.runner.Main;
 
 import java.util.*;
 

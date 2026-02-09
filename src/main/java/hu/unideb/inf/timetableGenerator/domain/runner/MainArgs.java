@@ -1,9 +1,9 @@
-package hu.unideb.inf.timetableGenerator.runner;
+package hu.unideb.inf.timetableGenerator.domain.runner;
 
-import hu.unideb.inf.timetableGenerator.generator.TimeTableGenerator;
-import hu.unideb.inf.timetableGenerator.model.*;
-import hu.unideb.inf.timetableGenerator.runner.parser.ArgParser;
-import hu.unideb.inf.timetableGenerator.runner.parser.RoomArgParser;
+import hu.unideb.inf.timetableGenerator.domain.generator.TimeTableGenerator;
+import hu.unideb.inf.timetableGenerator.domain.model.*;
+import hu.unideb.inf.timetableGenerator.domain.runner.parser.ArgParser;
+import hu.unideb.inf.timetableGenerator.domain.runner.parser.RoomArgParser;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
@@ -24,7 +24,10 @@ public class MainArgs implements Main {
 
     private final TimeTableGenerator generator = new TimeTableGenerator();
 
-
+    /*
+    Args example:
+    1 200 Monday 8:00 9:00 10:00 11:00 # 13:00 14:00 15:00 16:00 17:00 18:00 19:00 | Tuesday 8:00 9:00 10:00 11:00 # 13:00 14:00 15:00 16:00 17:00 18:00 19:00 - 2 180 Monday 8:00 9:00 10:00 11:00 # 13:00 14:00 15:00 16:00 17:00 18:00 19:00 | Tuesday 8:00 9:00 10:00 11:00 # 13:00 14:00 15:00 16:00 17:00 18:00 19:00 - 3 28 Monday 8:00 9:00 10:00 11:00 # 13:00 14:00 15:00 16:00 17:00 18:00 19:00 | Tuesday 8:00 9:00 10:00 11:00 # 13:00 14:00 15:00 16:00 17:00 18:00 19:00 - 4 32 Monday 8:00 9:00 10:00 11:00 # 13:00 14:00 15:00 16:00 17:00 18:00 19:00 | Tuesday 8:00 9:00 10:00 11:00 # 13:00 14:00 15:00 16:00 17:00 18:00 19:00 - - Statistics "John Doe" 180 Math "Jane Doe" 24 - "5:John Doe:noClassesAfter:15:00" "3:Jane Doe:noClassesOnDay:Monday" "2:Jane Doe:noClassesBefore:10:00" "1:John Doe:maxClassesPerDay:4"
+     */
     public static void main(String[] args) {
         MainArgs mainArgs = new MainArgs();
         mainArgs.setArgParser(new RoomArgParser(mainArgs));

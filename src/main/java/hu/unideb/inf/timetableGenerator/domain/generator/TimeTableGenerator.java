@@ -1,6 +1,6 @@
-package hu.unideb.inf.timetableGenerator.generator;
+package hu.unideb.inf.timetableGenerator.domain.generator;
 
-import hu.unideb.inf.timetableGenerator.model.*;
+import hu.unideb.inf.timetableGenerator.domain.model.*;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 

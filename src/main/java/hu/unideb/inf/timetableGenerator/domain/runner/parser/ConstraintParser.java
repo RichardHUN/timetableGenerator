@@ -1,7 +1,7 @@
-package hu.unideb.inf.timetableGenerator.runner.parser;
+package hu.unideb.inf.timetableGenerator.domain.runner.parser;
 
-import hu.unideb.inf.timetableGenerator.model.Preference;
-import hu.unideb.inf.timetableGenerator.runner.Main;
+import hu.unideb.inf.timetableGenerator.domain.model.Preference;
+import hu.unideb.inf.timetableGenerator.domain.runner.Main;
 
 public class ConstraintParser implements ArgParser {
     private final Main main;

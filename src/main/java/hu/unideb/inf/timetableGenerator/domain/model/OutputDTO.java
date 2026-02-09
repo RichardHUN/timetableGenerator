@@ -1,8 +1,7 @@
-package hu.unideb.inf.timetableGenerator.model;
+package hu.unideb.inf.timetableGenerator.domain.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.ToString;
 
 import java.util.List;
 

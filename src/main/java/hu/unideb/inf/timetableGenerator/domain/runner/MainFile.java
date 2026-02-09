@@ -1,10 +1,9 @@
-package hu.unideb.inf.timetableGenerator.runner;
+package hu.unideb.inf.timetableGenerator.domain.runner;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import hu.unideb.inf.timetableGenerator.generator.TimeTableGenerator;
-import hu.unideb.inf.timetableGenerator.model.*;
-import hu.unideb.inf.timetableGenerator.runner.parser.ArgParser;
-import hu.unideb.inf.timetableGenerator.runner.parser.RoomArgParser;
+import hu.unideb.inf.timetableGenerator.domain.generator.TimeTableGenerator;
+import hu.unideb.inf.timetableGenerator.domain.model.*;
+import hu.unideb.inf.timetableGenerator.domain.runner.parser.ArgParser;
+import hu.unideb.inf.timetableGenerator.domain.runner.parser.RoomArgParser;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
@@ -76,21 +75,12 @@ public class MainFile implements Main {
         if(rooms.isEmpty() || courses.isEmpty() || week.getDays().isEmpty() || preferences.isEmpty()) {
             throw new IllegalStateException("Main not run before trying to get results.");
         }
-        InputDTO input = InputDTO.builder()
+        return generator.generate(InputDTO.builder()
                 .week(week)
                 .rooms(rooms)
                 .plannedCourses(courses)
                 .preferences(preferences)
-                .build();
-        //TODO: remove
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(input);
-            System.out.println(json);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return generator.generate(input);
+                .build());
     }
 
     @Override

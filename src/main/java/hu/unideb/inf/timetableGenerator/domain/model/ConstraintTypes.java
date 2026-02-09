@@ -1,6 +1,4 @@
-package hu.unideb.inf.timetableGenerator.model;
-
-import lombok.ToString;
+package hu.unideb.inf.timetableGenerator.domain.model;
 
 import java.util.List;
 import java.util.function.Predicate;

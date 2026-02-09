@@ -1,7 +1,8 @@
-package hu.unideb.inf.timetableGenerator.runner;
+package hu.unideb.inf.timetableGenerator.domain.runner;
 
-import hu.unideb.inf.timetableGenerator.model.*;
-import hu.unideb.inf.timetableGenerator.runner.parser.ArgParser;
+import hu.unideb.inf.timetableGenerator.domain.generator.TimeTableGenerator;
+import hu.unideb.inf.timetableGenerator.domain.model.*;
+import hu.unideb.inf.timetableGenerator.domain.runner.parser.ArgParser;
 
 import java.util.List;
 
@@ -41,7 +42,7 @@ public interface Main {
     }
 
     /**
-     * Should pass the {@link InputDTO} to the {@link hu.unideb.inf.timetableGenerator.generator.TimeTableGenerator}.
+     * Should pass the {@link InputDTO} to the {@link TimeTableGenerator}.
      * Shouldn't be called directly. Use {@link #getResult()} instead.
      * @return the generated result
      */
