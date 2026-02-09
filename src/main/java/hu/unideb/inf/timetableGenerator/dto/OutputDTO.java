@@ -1,5 +1,7 @@
-package hu.unideb.inf.timetableGenerator.domain.model;
+package hu.unideb.inf.timetableGenerator.dto;
 
+import hu.unideb.inf.timetableGenerator.domain.model.Course;
+import hu.unideb.inf.timetableGenerator.domain.model.Week;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
