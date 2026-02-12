@@ -118,7 +118,7 @@ public class Course {
                 "day=" + day.getName() +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
-                ", name='" + name + '\'' +
+                ", email='" + name + '\'' +
                 ", room=" + room +
                 ", presenterName='" + presenterName + '\'' +
                 ", numberOfListeners=" + numberOfListeners +

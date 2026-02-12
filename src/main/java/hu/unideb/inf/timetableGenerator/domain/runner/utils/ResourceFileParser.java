@@ -15,7 +15,7 @@ public final class ResourceFileParser {
 
     /**
      * Returns the contents of a file placed in the resources folder.
-     * @param fileName the name of the file to parse. Should be in resources folder.
+     * @param fileName the email of the file to parse. Should be in resources folder.
      * @return the contents of the file as a String
      */
     public static String parseResourceFile(String fileName) {

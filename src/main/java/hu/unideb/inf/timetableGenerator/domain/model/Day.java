@@ -13,7 +13,7 @@ import java.util.List;
 @Builder(toBuilder = true)
 public class Day implements Cloneable {
     /**
-     * Contains the name of the day and the available time windows in that day,
+     * Contains the email of the day and the available time windows in that day,
      * represented as a {@link Week} object.
      */
 
@@ -31,7 +31,7 @@ public class Day implements Cloneable {
 
     /**
      * Generates a {@link Day}, that starts at 8:00 and ends at 20:00, with no breaks.
-     * @param name the name of the day
+     * @param name the email of the day
      */
     public Day(String name) {
         this.name = name;

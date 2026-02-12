@@ -2,6 +2,19 @@ spring:
   application:
     name: timetableGenerator
 
+  datasource:
+    url: jdbc:postgresql://localhost:5432/TimeTableGenerator
+    username: postgres
+    password: asd
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
 server:
   port: 8080
 
