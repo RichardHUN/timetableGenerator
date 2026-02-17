@@ -1,0 +1,491 @@
+{
+  "week" : {
+    "days" : [ {
+      "name" : "Monday",
+      "availableWindows" : [ [ {
+        "hour" : 8,
+        "minute" : 0
+      }, {
+        "hour" : 9,
+        "minute" : 0
+      }, {
+        "hour" : 10,
+        "minute" : 0
+      }, {
+        "hour" : 11,
+        "minute" : 0
+      } ], [ {
+        "hour" : 13,
+        "minute" : 0
+      }, {
+        "hour" : 14,
+        "minute" : 0
+      }, {
+        "hour" : 15,
+        "minute" : 0
+      }, {
+        "hour" : 16,
+        "minute" : 0
+      }, {
+        "hour" : 17,
+        "minute" : 0
+      }, {
+        "hour" : 18,
+        "minute" : 0
+      }, {
+        "hour" : 19,
+        "minute" : 0
+      } ] ]
+    }, {
+      "name" : "Tuesday",
+      "availableWindows" : [ [ {
+        "hour" : 8,
+        "minute" : 0
+      }, {
+        "hour" : 9,
+        "minute" : 0
+      }, {
+        "hour" : 10,
+        "minute" : 0
+      }, {
+        "hour" : 11,
+        "minute" : 0
+      } ], [ {
+        "hour" : 13,
+        "minute" : 0
+      }, {
+        "hour" : 14,
+        "minute" : 0
+      }, {
+        "hour" : 15,
+        "minute" : 0
+      }, {
+        "hour" : 16,
+        "minute" : 0
+      }, {
+        "hour" : 17,
+        "minute" : 0
+      }, {
+        "hour" : 18,
+        "minute" : 0
+      }, {
+        "hour" : 19,
+        "minute" : 0
+      } ] ]
+    }, {
+      "name" : "Wednesday",
+      "availableWindows" : [ [ {
+        "hour" : 7,
+        "minute" : 0
+      }, {
+        "hour" : 8,
+        "minute" : 0
+      }, {
+        "hour" : 9,
+        "minute" : 0
+      }, {
+        "hour" : 10,
+        "minute" : 0
+      }, {
+        "hour" : 11,
+        "minute" : 0
+      } ], [ {
+        "hour" : 13,
+        "minute" : 0
+      }, {
+        "hour" : 14,
+        "minute" : 0
+      }, {
+        "hour" : 15,
+        "minute" : 0
+      }, {
+        "hour" : 16,
+        "minute" : 0
+      }, {
+        "hour" : 17,
+        "minute" : 0
+      }, {
+        "hour" : 18,
+        "minute" : 0
+      }, {
+        "hour" : 19,
+        "minute" : 0
+      }, {
+        "hour" : 20,
+        "minute" : 0
+      } ] ]
+    } ]
+  },
+  "rooms" : [ {
+    "roomNumber" : "1",
+    "capacity" : 200,
+    "week" : {
+      "days" : [ {
+        "name" : "Monday",
+        "availableWindows" : [ [ {
+          "hour" : 8,
+          "minute" : 0
+        }, {
+          "hour" : 9,
+          "minute" : 0
+        }, {
+          "hour" : 10,
+          "minute" : 0
+        }, {
+          "hour" : 11,
+          "minute" : 0
+        } ], [ {
+          "hour" : 13,
+          "minute" : 0
+        }, {
+          "hour" : 14,
+          "minute" : 0
+        }, {
+          "hour" : 15,
+          "minute" : 0
+        }, {
+          "hour" : 16,
+          "minute" : 0
+        }, {
+          "hour" : 17,
+          "minute" : 0
+        }, {
+          "hour" : 18,
+          "minute" : 0
+        }, {
+          "hour" : 19,
+          "minute" : 0
+        } ] ]
+      }, {
+        "name" : "Tuesday",
+        "availableWindows" : [ [ {
+          "hour" : 8,
+          "minute" : 0
+        }, {
+          "hour" : 9,
+          "minute" : 0
+        }, {
+          "hour" : 10,
+          "minute" : 0
+        }, {
+          "hour" : 11,
+          "minute" : 0
+        } ], [ {
+          "hour" : 13,
+          "minute" : 0
+        }, {
+          "hour" : 14,
+          "minute" : 0
+        }, {
+          "hour" : 15,
+          "minute" : 0
+        }, {
+          "hour" : 16,
+          "minute" : 0
+        }, {
+          "hour" : 17,
+          "minute" : 0
+        }, {
+          "hour" : 18,
+          "minute" : 0
+        }, {
+          "hour" : 19,
+          "minute" : 0
+        } ] ]
+      }, {
+        "name" : "Wednesday",
+        "availableWindows" : [ [ {
+          "hour" : 7,
+          "minute" : 0
+        }, {
+          "hour" : 8,
+          "minute" : 0
+        }, {
+          "hour" : 9,
+          "minute" : 0
+        }, {
+          "hour" : 10,
+          "minute" : 0
+        }, {
+          "hour" : 11,
+          "minute" : 0
+        } ], [ {
+          "hour" : 13,
+          "minute" : 0
+        }, {
+          "hour" : 14,
+          "minute" : 0
+        }, {
+          "hour" : 15,
+          "minute" : 0
+        }, {
+          "hour" : 16,
+          "minute" : 0
+        }, {
+          "hour" : 17,
+          "minute" : 0
+        }, {
+          "hour" : 18,
+          "minute" : 0
+        }, {
+          "hour" : 19,
+          "minute" : 0
+        }, {
+          "hour" : 20,
+          "minute" : 0
+        } ] ]
+      } ]
+    }
+  }, {
+    "roomNumber" : "2",
+    "capacity" : 180,
+    "week" : {
+      "days" : [ {
+        "name" : "Monday",
+        "availableWindows" : [ [ {
+          "hour" : 8,
+          "minute" : 0
+        }, {
+          "hour" : 9,
+          "minute" : 0
+        }, {
+          "hour" : 10,
+          "minute" : 0
+        }, {
+          "hour" : 11,
+          "minute" : 0
+        } ], [ {
+          "hour" : 13,
+          "minute" : 0
+        }, {
+          "hour" : 14,
+          "minute" : 0
+        }, {
+          "hour" : 15,
+          "minute" : 0
+        }, {
+          "hour" : 16,
+          "minute" : 0
+        }, {
+          "hour" : 17,
+          "minute" : 0
+        }, {
+          "hour" : 18,
+          "minute" : 0
+        }, {
+          "hour" : 19,
+          "minute" : 0
+        } ] ]
+      }, {
+        "name" : "Tuesday",
+        "availableWindows" : [ [ {
+          "hour" : 8,
+          "minute" : 0
+        }, {
+          "hour" : 9,
+          "minute" : 0
+        }, {
+          "hour" : 10,
+          "minute" : 0
+        }, {
+          "hour" : 11,
+          "minute" : 0
+        } ], [ {
+          "hour" : 13,
+          "minute" : 0
+        }, {
+          "hour" : 14,
+          "minute" : 0
+        }, {
+          "hour" : 15,
+          "minute" : 0
+        }, {
+          "hour" : 16,
+          "minute" : 0
+        }, {
+          "hour" : 17,
+          "minute" : 0
+        }, {
+          "hour" : 18,
+          "minute" : 0
+        }, {
+          "hour" : 19,
+          "minute" : 0
+        } ] ]
+      } ]
+    }
+  }, {
+    "roomNumber" : "3",
+    "capacity" : 28,
+    "week" : {
+      "days" : [ {
+        "name" : "Monday",
+        "availableWindows" : [ [ {
+          "hour" : 8,
+          "minute" : 0
+        }, {
+          "hour" : 9,
+          "minute" : 0
+        }, {
+          "hour" : 10,
+          "minute" : 0
+        }, {
+          "hour" : 11,
+          "minute" : 0
+        } ], [ {
+          "hour" : 13,
+          "minute" : 0
+        }, {
+          "hour" : 14,
+          "minute" : 0
+        }, {
+          "hour" : 15,
+          "minute" : 0
+        }, {
+          "hour" : 16,
+          "minute" : 0
+        }, {
+          "hour" : 17,
+          "minute" : 0
+        }, {
+          "hour" : 18,
+          "minute" : 0
+        }, {
+          "hour" : 19,
+          "minute" : 0
+        } ] ]
+      }, {
+        "name" : "Tuesday",
+        "availableWindows" : [ [ {
+          "hour" : 8,
+          "minute" : 0
+        }, {
+          "hour" : 9,
+          "minute" : 0
+        }, {
+          "hour" : 10,
+          "minute" : 0
+        }, {
+          "hour" : 11,
+          "minute" : 0
+        } ], [ {
+          "hour" : 13,
+          "minute" : 0
+        }, {
+          "hour" : 14,
+          "minute" : 0
+        }, {
+          "hour" : 15,
+          "minute" : 0
+        }, {
+          "hour" : 16,
+          "minute" : 0
+        }, {
+          "hour" : 17,
+          "minute" : 0
+        }, {
+          "hour" : 18,
+          "minute" : 0
+        }, {
+          "hour" : 19,
+          "minute" : 0
+        } ] ]
+      } ]
+    }
+  }, {
+    "roomNumber" : "4",
+    "capacity" : 32,
+    "week" : {
+      "days" : [ {
+        "name" : "Monday",
+        "availableWindows" : [ [ {
+          "hour" : 8,
+          "minute" : 0
+        }, {
+          "hour" : 9,
+          "minute" : 0
+        }, {
+          "hour" : 10,
+          "minute" : 0
+        }, {
+          "hour" : 11,
+          "minute" : 0
+        } ], [ {
+          "hour" : 13,
+          "minute" : 0
+        }, {
+          "hour" : 14,
+          "minute" : 0
+        }, {
+          "hour" : 15,
+          "minute" : 0
+        }, {
+          "hour" : 16,
+          "minute" : 0
+        }, {
+          "hour" : 17,
+          "minute" : 0
+        }, {
+          "hour" : 18,
+          "minute" : 0
+        }, {
+          "hour" : 19,
+          "minute" : 0
+        } ] ]
+      }, {
+        "name" : "Tuesday",
+        "availableWindows" : [ [ {
+          "hour" : 8,
+          "minute" : 0
+        }, {
+          "hour" : 9,
+          "minute" : 0
+        }, {
+          "hour" : 10,
+          "minute" : 0
+        }, {
+          "hour" : 11,
+          "minute" : 0
+        } ], [ {
+          "hour" : 13,
+          "minute" : 0
+        }, {
+          "hour" : 14,
+          "minute" : 0
+        }, {
+          "hour" : 15,
+          "minute" : 0
+        }, {
+          "hour" : 16,
+          "minute" : 0
+        }, {
+          "hour" : 17,
+          "minute" : 0
+        }, {
+          "hour" : 18,
+          "minute" : 0
+        }, {
+          "hour" : 19,
+          "minute" : 0
+        } ] ]
+      } ]
+    }
+  } ],
+  "plannedCourses" : [ {
+    "name" : "Statistics",
+    "presenterName" : "John Doe",
+    "numberOfListeners" : 180,
+    "durationsHours" : 1,
+    "durationMinutes" : 40
+  }, {
+    "name" : "Math",
+    "presenterName" : "Jane Doe",
+    "numberOfListeners" : 24,
+    "durationsHours" : 1,
+    "durationMinutes" : 30
+  } ],
+  "preferences" : [ "5:John Doe:noClassesBefore:10:00",
+          "3:Jane Doe:noClassesOnDay:Monday",
+          "2:Jane Doe:noClassesBefore:10:00",
+          "1:John Doe:maxClassesPerDay:4" ]
+}

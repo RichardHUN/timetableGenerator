@@ -31,4 +31,4 @@ build/
 
 ### VS Code ###
 .vscode/
-/src/main/java/hu/unideb/inf/timetableGenerator/runner/parser/WeekArgParser.java
+/src/main/java/hu/unideb/inf/timetableGenerator/domain/runner/parser/WeekArgParser.java
