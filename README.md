@@ -26,10 +26,21 @@ java -jar target\timetableGenerator-0.0.1-SNAPSHOT.jar
 
 Frontend
 
-The `frontend/` folder is intentionally left empty as a placeholder. See `frontend/README.md` for suggested stacks and basic instructions.
+Basic info about the frontend:
+- Built with SvelteKit (modern web framework)
+- Provides user authentication (register, login, logout)
+- Timetable generation interface
+- User profile display
+- Responsive navigation bar with theme toggle
+- Integrates with backend API for authentication and user data
 
-Notes
-
-- The Git repository (history) remains at the root of this repo.
-- Build artifacts and IDE folders for the backend are ignored in `.gitignore`.
-
+To run the frontend locally:
+1. Change directory into the frontend:
+	```powershell
+	cd frontend
+	```
+2. Start the development server:
+	```powershell
+	npm run dev -- --open
+	```
+See `frontend/README.md` for more details, features, and development scripts.
