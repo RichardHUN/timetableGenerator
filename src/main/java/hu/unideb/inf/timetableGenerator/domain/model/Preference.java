@@ -57,7 +57,7 @@ public class Preference implements Predicate<List<Course>> {
         String constraintName = split[2];
 
         if (!isValidConstraintName(constraintName)) {
-            throw new IllegalArgumentException("Invalid constraint email: " + constraintName);
+            throw new IllegalArgumentException("Invalid constraint name: " + constraintName);
         }
         ConstraintTypes.ConstraintType constraintType = ConstraintTypes.of(constraintName);
 
