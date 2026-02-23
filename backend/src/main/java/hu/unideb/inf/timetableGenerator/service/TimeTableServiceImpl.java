@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 public class TimeTableServiceImpl implements TimeTableService {
 
     //private final repository...
-    private final TimeTableGenerator timeTableGenerator = new TimeTableGenerator();
+    private final TimeTableGenerator timeTableGenerator;
 
     @Override
     public OutputDTO generateTimeTable(@NonNull InputDTO input) {

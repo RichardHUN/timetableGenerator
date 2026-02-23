@@ -3,21 +3,31 @@ package hu.unideb.inf.timetableGenerator.domain.generator;
 import hu.unideb.inf.timetableGenerator.domain.model.*;
 import hu.unideb.inf.timetableGenerator.dto.InputDTO;
 import hu.unideb.inf.timetableGenerator.dto.OutputDTO;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 @Slf4j
+@Component
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class TimeTableGenerator {
 
     private static final int MAX_SOLUTIONS = 100;
-    private int solutionsFound = 0;
+    private int solutionsFound;
 
     public OutputDTO generate(@NonNull InputDTO input) {
         log.info("Starting timetable generation with preference-based scoring");
+
+        solutionsFound = 0;
 
         List<SolutionCandidate> candidates = new ArrayList<>();
 
