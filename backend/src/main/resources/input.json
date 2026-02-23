@@ -475,13 +475,13 @@
     "name" : "Statistics",
     "presenterName" : "John Doe",
     "numberOfListeners" : 180,
-    "durationsHours" : 1,
+    "durationHours" : 1,
     "durationMinutes" : 40
   }, {
     "name" : "Math",
     "presenterName" : "Jane Doe",
     "numberOfListeners" : 24,
-    "durationsHours" : 1,
+    "durationHours" : 1,
     "durationMinutes" : 30
   } ],
   "preferences" : [ "5:John Doe:noClassesBefore:10:00",

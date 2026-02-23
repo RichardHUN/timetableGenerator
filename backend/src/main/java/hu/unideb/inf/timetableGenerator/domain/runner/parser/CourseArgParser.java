@@ -16,7 +16,7 @@ public class CourseArgParser implements ArgParser {
     private String courseName;
     private String presenterName;
     private int numberOfListeners;
-    private int durationsHours;
+    private int durationHours;
     private int durationMinutes;
     private int parseStep = 0;
 
@@ -41,9 +41,9 @@ public class CourseArgParser implements ArgParser {
                 parseStep++;
             }
             case 3 -> {
-                durationsHours = main.tryParsingInt(arg.split(":")[0], "Cannot parse duration hours: " + arg);
+                durationHours = main.tryParsingInt(arg.split(":")[0], "Cannot parse duration hours: " + arg);
                 durationMinutes = main.tryParsingInt(arg.split(":")[1], "Cannot parse duration minutes: " + arg);
-                main.getCourses().add(new PlannedCourse(courseName, presenterName, numberOfListeners, durationsHours, durationMinutes));
+                main.getCourses().add(new PlannedCourse(courseName, presenterName, numberOfListeners, durationHours, durationMinutes));
                 parseStep = 0;
             }
         }

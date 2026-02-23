@@ -12,8 +12,8 @@ import java.util.Objects;
 @Builder(toBuilder = true)
 public class Time implements Comparable<Time> {
 
-    private int hour;
-    private int minute;
+    private Integer hour;
+    private Integer minute;
 
     public boolean isLaterThan(Time time) {
         return this.compareTo(time) > 0;
@@ -93,7 +93,7 @@ public class Time implements Comparable<Time> {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Time time = (Time) o;
-        return hour == time.hour && minute == time.minute;
+        return Objects.equals(hour, time.hour) && Objects.equals(minute, time.minute);
     }
 
     @Override

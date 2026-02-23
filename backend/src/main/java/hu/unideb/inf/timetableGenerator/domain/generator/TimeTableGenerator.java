@@ -97,7 +97,7 @@ public class TimeTableGenerator {
                                     continue;
                                 }
 
-                                Time endTime = startTime.plus(plannedCourse.durationsHours(), plannedCourse.durationMinutes());
+                                Time endTime = startTime.plus(plannedCourse.durationHours(), plannedCourse.durationMinutes());
 
                                 Room roomCopy = room.clone();
                                 roomCopy.occupy(roomDay, startTime, endTime);
