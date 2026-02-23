@@ -74,15 +74,16 @@
 
     /* Dark mode navbar */
     :global(html[data-theme="dark"]) nav.navbar.navbar-themed {
-        background: linear-gradient(180deg, rgba(0,0,0,0.9), rgba(0,0,0,0.8));
-        background-color: rgba(10,12,15,0.95) !important;
+        /* slightly lighter than the page background for visual separation */
+        background: linear-gradient(180deg, rgba(30,34,40,0.95), rgba(255, 122, 0,0.2));
+        background-color: rgba(40,44,52,0.98) !important;
         border-bottom: 1px solid rgba(255,255,255,0.06);
         color: #e6eef6;
     }
 
     /* Light mode navbar */
     :global(html[data-theme="light"]) .navbar-themed {
-        background: linear-gradient(180deg, rgba(255,255,255,0.8), transparent);
+        background: linear-gradient(180deg, rgba(255, 122, 0,0.225), rgba(40,44,52,0.15));
         border-bottom: 1px solid rgba(0,0,0,0.1);
     }
 

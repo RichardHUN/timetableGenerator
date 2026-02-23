@@ -28,8 +28,8 @@
 		if (result.token) {
 			localStorage.setItem('token', result.token);
 			success = true;
-			// Redirect to frontend /user route (no /api prefix)
-			window.location.href = '/user';
+			// Redirect to frontend root route (no /api prefix)
+			window.location.href = '/';
 		} else {
 			error = 'Login successful but no token received';
 			loading = false;
