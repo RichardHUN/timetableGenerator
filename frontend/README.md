@@ -15,7 +15,8 @@ This will start a development server and automatically open the application in y
 
 The frontend provides:
 - User authentication (register, login, logout)
-- ~~Timetable generation interface~~
+- Timetable generation interface
+- Display of generated timetable
 - User profile display
 - Responsive navigation bar with theme toggle
 - Integration with backend API for authentication and user data
@@ -23,6 +24,7 @@ The frontend provides:
 ## Available Routes
 - `/` — Home page
 - `/generate` — Timetable generation page
+- `/generate/result` — Generated timetable display page
 - `/login` — Login page
 - `/register` — Registration page
 - `/user` — User profile page
