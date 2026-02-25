@@ -9,28 +9,64 @@
     import { PUBLIC_API_URL } from '$env/static/public';
     import { goto } from '$app/navigation';
 
-    type RoomState = { id: number; data: any };
-    type PlannedCourseState = { id: number; data: { name: string; presenterName: string; numberOfListeners: number; durationHours: number; durationMinutes: number } };
-    type PreferenceState = { id: number; data: { strictness: number; presenterName: string; constraint: string; value: any } };
+    type RoomState = { id: number; open: boolean; data: any };
+    type PlannedCourseState = { id: number; open: boolean; data: { name: string; presenterName: string; numberOfListeners: number; durationHours: number; durationMinutes: number } };
+    type PreferenceState = { id: number; open: boolean; data: { strictness: number; presenterName: string; constraint: string; value: any } };
 
     let rooms: RoomState[] = [];
     let plannedCourses: PlannedCourseState[] = [];
     let preferences: PreferenceState[] = [];
 
+    let coursesOpen = true;
+    let preferencesOpen = true;
+    let roomsOpen = true;
+
     let generating = false;
     let generateResult: any = null;
     let generateError: string | null = null;
 
+    function friendlyError(raw: string): string {
+        if (!raw) return '';
+        const lower = raw.toLowerCase();
+        if (lower.includes('invalid json') || lower.includes('json file'))
+            return 'The uploaded file is not valid JSON. Please check the file and try again.';
+        if (lower.includes('network error') || lower.includes('failed to fetch') || lower.includes('networkerror'))
+            return 'Could not reach the server. Please check your connection and try again.';
+        if (lower.includes('401'))
+            return 'You are not authorised. Please log in and try again.';
+        if (lower.includes('403'))
+            return 'Access denied. You do not have permission to generate a timetable.';
+        if (lower.includes('400'))
+            return 'Invalid input: the data could not be processed. Please check your input and try again.';
+        if (lower.includes('404') || lower.includes('503'))
+            return 'The generation service is unavailable. Please try again later.';
+        if (/50[0-9]/.test(raw))
+            return 'The server encountered an internal error. Please try again later.';
+        return raw;
+    }
+
     function addRoom() {
-        rooms = [...rooms, { id: Date.now(), data: {} }];
+        rooms = [...rooms, { id: Date.now(), open: true, data: {} }];
     }
 
     function addPlannedCourse() {
-        plannedCourses = [...plannedCourses, { id: Date.now(), data: { name: '', presenterName: '', numberOfListeners: 0, durationHours: 0, durationMinutes: 0 } }];
+        plannedCourses = [...plannedCourses, { id: Date.now(), open: true, data: { name: '', presenterName: '', numberOfListeners: 0, durationHours: 0, durationMinutes: 0 } }];
     }
 
     function addPreference() {
-        preferences = [...preferences, { id: Date.now(), data: { strictness: 3, presenterName: '', constraint: 'noClassesOnDay', value: '' } }];
+        preferences = [...preferences, { id: Date.now(), open: true, data: { strictness: 3, presenterName: '', constraint: 'noClassesOnDay', value: '' } }];
+    }
+
+    function toggleCourse(id: number) {
+        plannedCourses = plannedCourses.map(c => c.id === id ? { ...c, open: !c.open } : c);
+    }
+
+    function togglePreference(id: number) {
+        preferences = preferences.map(p => p.id === id ? { ...p, open: !p.open } : p);
+    }
+
+    function toggleRoom(id: number) {
+        rooms = rooms.map(r => r.id === id ? { ...r, open: !r.open } : r);
     }
 
     function removePlannedCourse(id: number) {
@@ -91,7 +127,7 @@
             // helpful debug log for developer console
             console.debug('Sending /api/generate payload:', payload);
 
-            const res = await fetch(`${PUBLIC_API_URL}/api/generate`, {
+            const res = await fetch(`${PUBLIC_API_URL}/api/generate/simple`, {
                 method: 'POST',
                 headers,
                 body: JSON.stringify(payload)
@@ -236,6 +272,14 @@
     <div class="card shadow-sm">
         <div class="card-body p-4">
             <h1 class="h2 mb-3">Generate Timetable</h1>
+
+            {#if generateError}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {friendlyError(generateError)}
+                    <button type="button" class="btn-close" aria-label="Close" on:click={() => generateError = null}></button>
+                </div>
+            {/if}
+
             <p>Provide input data and generate <b>YOUR timetable.</b></p>
 
             
@@ -249,10 +293,6 @@
 
                     {#if generating}
                         <div class="text-muted mt-2">Sending JSON to server...</div>
-                    {/if}
-
-                    {#if generateError}
-                        <div class="alert alert-danger mt-2">{generateError}</div>
                     {/if}
 
                     {#if generateResult}
@@ -275,86 +315,128 @@
             
             <div class="planned-courses-frame card mt-3 p-3">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h5 class="mb-0">Planned Courses</h5>
+                    <button class="fold-section-btn" type="button" on:click={() => coursesOpen = !coursesOpen} aria-label="Toggle planned courses">
+                        <span class="fold-chevron" class:open={coursesOpen}>&#9654;</span>
+                        <h5 class="mb-0 d-inline">Planned Courses</h5>
+                        {#if !coursesOpen}<span class="fold-count text-muted ms-2">({plannedCourses.length})</span>{/if}
+                    </button>
                     <div>
                         <button class="btn btn-sm btn-primary me-2" type="button" on:click={addPlannedCourse}>Add course</button>
                     </div>
                 </div>
 
-                {#if plannedCourses.length === 0}
-                    <div class="text-muted mb-2">No planned courses yet. Click "Add course" to create one.</div>
-                {/if}
+                {#if coursesOpen}
+                    {#if plannedCourses.length === 0}
+                        <div class="text-muted mb-2">No planned courses yet. Click "Add course" to create one.</div>
+                    {/if}
 
-                {#each plannedCourses as course, i (course.id)}
-                    <div class="planned-course-entry mb-2 p-2 border rounded">
-                        <div class="d-flex justify-content-end mb-2">
-                            <button class="btn btn-sm btn-outline-danger" type="button" on:click={() => removePlannedCourse(course.id)} aria-label="Remove course">Remove</button>
+                    {#each plannedCourses as course, i (course.id)}
+                        <div class="planned-course-entry mb-2 border rounded">
+                            <div class="item-fold-header d-flex justify-content-between align-items-center" role="button" tabindex="0" on:click={() => toggleCourse(course.id)} on:keydown={(e) => e.key === 'Enter' && toggleCourse(course.id)}>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="fold-chevron" class:open={course.open}>&#9654;</span>
+                                    <span class="item-summary">{course.data.name || 'New Course'}{course.data.presenterName ? ' — ' + course.data.presenterName : ''}</span>
+                                </div>
+                                <button class="btn btn-sm btn-outline-danger" type="button" on:click|stopPropagation={() => removePlannedCourse(course.id)} aria-label="Remove course">Remove</button>
+                            </div>
+                            {#if course.open}
+                                <div class="p-2">
+                                    <PlannedCourse
+                                        name={course.data.name}
+                                        presenterName={course.data.presenterName}
+                                        numberOfListeners={course.data.numberOfListeners}
+                                        durationHours={course.data.durationHours}
+                                        durationMinutes={course.data.durationMinutes}
+                                        on:change={(e) => onPlannedCourseChange(i, e)}
+                                    />
+                                </div>
+                            {/if}
                         </div>
-                        <PlannedCourse
-                            name={course.data.name}
-                            presenterName={course.data.presenterName}
-                            numberOfListeners={course.data.numberOfListeners}
-                            durationHours={course.data.durationHours}
-                            durationMinutes={course.data.durationMinutes}
-                            on:change={(e) => onPlannedCourseChange(i, e)}
-                        />
-                    </div>
-                {/each}
+                    {/each}
+                {/if}
             </div>
 
             <div class="preferences-frame card mt-3 p-3">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h5 class="mb-0">Preferences</h5>
+                    <button class="fold-section-btn" type="button" on:click={() => preferencesOpen = !preferencesOpen} aria-label="Toggle preferences">
+                        <span class="fold-chevron" class:open={preferencesOpen}>&#9654;</span>
+                        <h5 class="mb-0 d-inline">Preferences</h5>
+                        {#if !preferencesOpen}<span class="fold-count text-muted ms-2">({preferences.length})</span>{/if}
+                    </button>
                     <div>
                         <button class="btn btn-sm btn-primary me-2" type="button" on:click={addPreference}>Add preference</button>
                     </div>
                 </div>
 
-                {#if preferences.length === 0}
-                    <div class="text-muted mb-2">No preferences yet. Click "Add preference" to create one.</div>
-                {/if}
+                {#if preferencesOpen}
+                    {#if preferences.length === 0}
+                        <div class="text-muted mb-2">No preferences yet. Click "Add preference" to create one.</div>
+                    {/if}
 
-                {#each preferences as pref, i (pref.id)}
-                    <div class="preference-entry mb-2 p-2 border rounded">
-                        <div class="d-flex justify-content-end mb-2">
-                            <button class="btn btn-sm btn-outline-danger" type="button" on:click={() => removePreference(pref.id)} aria-label="Remove preference">Remove</button>
+                    {#each preferences as pref, i (pref.id)}
+                        <div class="preference-entry mb-2 border rounded">
+                            <div class="item-fold-header d-flex justify-content-between align-items-center" role="button" tabindex="0" on:click={() => togglePreference(pref.id)} on:keydown={(e) => e.key === 'Enter' && togglePreference(pref.id)}>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="fold-chevron" class:open={pref.open}>&#9654;</span>
+                                    <span class="item-summary">{pref.data.presenterName || 'New Preference'}{pref.data.constraint ? ' — ' + pref.data.constraint : ''}</span>
+                                </div>
+                                <button class="btn btn-sm btn-outline-danger" type="button" on:click|stopPropagation={() => removePreference(pref.id)} aria-label="Remove preference">Remove</button>
+                            </div>
+                            {#if pref.open}
+                                <div class="p-2">
+                                    <PreferenceInput
+                                        strictness={pref.data.strictness}
+                                        presenterName={pref.data.presenterName}
+                                        constraint={pref.data.constraint as any}
+                                        value={pref.data.value}
+                                        on:change={(e) => onPreferenceChange(i, e)}
+                                    />
+                                </div>
+                            {/if}
                         </div>
-                        <PreferenceInput
-                            strictness={pref.data.strictness}
-                            presenterName={pref.data.presenterName}
-                            constraint={pref.data.constraint}
-                            value={pref.data.value}
-                            on:change={(e) => onPreferenceChange(i, e)}
-                        />
-                    </div>
-                {/each}
+                    {/each}
+                {/if}
             </div>
 
             <div class="rooms-frame card mt-3 p-3">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="mb-0">Rooms</h5>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <button class="fold-section-btn" type="button" on:click={() => roomsOpen = !roomsOpen} aria-label="Toggle rooms">
+                        <span class="fold-chevron" class:open={roomsOpen}>&#9654;</span>
+                        <h5 class="mb-0 d-inline">Rooms</h5>
+                        {#if !roomsOpen}<span class="fold-count text-muted ms-2">({rooms.length})</span>{/if}
+                    </button>
                     <div>
                         <button class="btn btn-sm btn-primary me-2" type="button" on:click={addRoom} aria-label="Add rooms">Add room</button>
                     </div>
                 </div>
 
-                {#if rooms.length === 0}
-                    <div class="text-muted">No rooms yet. Click "Add room" to add one.</div>
-                {/if}
+                {#if roomsOpen}
+                    {#if rooms.length === 0}
+                        <div class="text-muted">No rooms yet. Click "Add room" to add one.</div>
+                    {/if}
 
-                {#each rooms as room, i (room.id)}
-                    <div class="room-entry mb-3 p-2 border rounded">
-                        <RoomInput
-                            roomNumber={room.data?.roomNumber || ''}
-                            capacity={room.data?.capacity ?? ''}
-                            initialDays={room.data?.days || []}
-                            on:change={(e) => onRoomChange(i, e)}
-                        />
-                        <div class="d-flex justify-content-end mb-2">
-                            <button class="btn btn-sm btn-outline-danger" type="button" on:click={() => removeRoom(room.id)} aria-label="Remove room">Remove</button>
+                    {#each rooms as room, i (room.id)}
+                        <div class="room-entry mb-3 border rounded">
+                            <div class="item-fold-header d-flex justify-content-between align-items-center" role="button" tabindex="0" on:click={() => toggleRoom(room.id)} on:keydown={(e) => e.key === 'Enter' && toggleRoom(room.id)}>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="fold-chevron" class:open={room.open}>&#9654;</span>
+                                    <span class="item-summary">{room.data?.roomNumber || 'New Room'}{room.data?.capacity ? ' — capacity: ' + room.data.capacity : ''}</span>
+                                </div>
+                                <button class="btn btn-sm btn-outline-danger" type="button" on:click|stopPropagation={() => removeRoom(room.id)} aria-label="Remove room">Remove</button>
+                            </div>
+                            {#if room.open}
+                                <div class="p-2">
+                                    <RoomInput
+                                        roomNumber={room.data?.roomNumber || ''}
+                                        capacity={room.data?.capacity ?? ''}
+                                        initialDays={room.data?.days || []}
+                                        on:change={(e) => onRoomChange(i, e)}
+                                    />
+                                </div>
+                            {/if}
                         </div>
-                    </div>
-                {/each}
+                    {/each}
+                {/if}
             </div>
 
             <div class="mt-4 d-flex justify-content-center">
@@ -403,5 +485,61 @@
     .pop-button:hover {
         transform: scale(1.05);
         box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15);
+    }
+
+    /* Section fold button */
+    .fold-section-btn {
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        color: inherit;
+    }
+
+    .fold-section-btn:focus {
+        outline: 2px solid rgba(0,0,0,0.2);
+        border-radius: 4px;
+    }
+
+    /* Item fold header */
+    .item-fold-header {
+        padding: 0.5rem 0.75rem;
+        cursor: pointer;
+        border-radius: 4px;
+        user-select: none;
+        transition: background-color 0.15s ease;
+    }
+
+    .item-fold-header:hover {
+        background-color: rgba(0,0,0,0.04);
+    }
+
+    :global(html[data-theme="dark"]) .item-fold-header:hover {
+        background-color: rgba(255,255,255,0.05);
+    }
+
+    .item-summary {
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .fold-count {
+        font-size: 0.85rem;
+    }
+
+    /* Chevron animation */
+    .fold-chevron {
+        display: inline-block;
+        font-size: 0.65rem;
+        transition: transform 0.2s ease;
+        transform: rotate(0deg);
+        color: #888;
+    }
+
+    .fold-chevron.open {
+        transform: rotate(90deg);
     }
 </style>

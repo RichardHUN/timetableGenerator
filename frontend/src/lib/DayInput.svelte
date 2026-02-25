@@ -92,7 +92,8 @@
   .day-frame {
     border: 1px solid rgba(16,24,40,0.08);
     border-radius: 8px;
-    background: var(--bs-body-bg, transparent);
+    /*background: var(--bs-body-bg, transparent);*/
+    background: rgba(7, 16, 26, 0.1);
     box-shadow: 0 1px 2px rgba(16,24,40,0.03);
   }
 

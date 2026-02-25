@@ -83,7 +83,7 @@
 
     /* Light mode navbar */
     :global(html[data-theme="light"]) .navbar-themed {
-        background: linear-gradient(180deg, rgba(255, 122, 0,0.225), rgba(40,44,52,0.15));
+        background: linear-gradient(180deg, rgba(255, 122, 0, 0.4), rgba(40,44,52,0.15));
         border-bottom: 1px solid rgba(0,0,0,0.1);
     }
 
