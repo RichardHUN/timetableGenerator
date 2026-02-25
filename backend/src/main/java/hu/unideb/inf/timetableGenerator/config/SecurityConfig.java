@@ -1,6 +1,7 @@
 package hu.unideb.inf.timetableGenerator.config;
 
 import hu.unideb.inf.timetableGenerator.filter.JwtAuthFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -60,6 +61,11 @@ public class SecurityConfig {
 
                 // Stateless session (required for JWT)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                // Return 401 for any unauthenticated request (no token, or token rejected by the filter)
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) ->
+                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")))
 
                 // Set custom authentication provider
                 .authenticationProvider(authenticationProvider())
