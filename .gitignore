@@ -31,4 +31,11 @@ build/
 
 ### VS Code ###
 .vscode/
-/src/main/java/hu/unideb/inf/timetableGenerator/runner/parser/WeekArgParser.java
+
+# Project moved into backend/ — ignore build artifacts there
+backend/HELP.md
+backend/target/
+backend/.idea/
+
+# Frontend
+frontend/node_modules/
