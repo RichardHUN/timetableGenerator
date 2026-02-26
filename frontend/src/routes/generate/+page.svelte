@@ -188,6 +188,23 @@
         }
     }
 
+        // persist last result so the /generate/result page can read it
+            try {
+            if (generateResult) {
+                sessionStorage.setItem('lastGenerateResult', JSON.stringify(generateResult));
+            }
+        } catch (e) {
+            // ignore storage errors
+        }
+
+        // automatically navigate to the result page when a result is available
+        try {
+            if (generateResult) {
+                await goto('/result');
+            }
+        } catch (e) {
+            // ignore navigation errors
+        }
     function exportJSON() {
         const payload = {
             rooms: rooms.map((r) => {
@@ -323,7 +340,7 @@
 
         try {
             if (generateResult) {
-                await goto('/generate/result');
+                await goto('/result');
             }
         } catch (e) {}
     }
@@ -352,6 +369,19 @@
                     <label class="form-label" for="upload-json">Upload JSON input</label>
                     <input id="upload-json" class="form-control" type="file" accept="application/json" on:change={handleFileChange} />
 
+                    {#if generating}
+                        <div class="text-muted mt-2">Sending JSON to server...</div>
+                    {/if}
+
+                    {#if generateResult}
+                        <div class="card mt-2">
+                            <div class="card-body">
+                                <h6 class="mb-2">Server response</h6>
+                                <pre style="white-space:pre-wrap;word-break:break-word">{typeof generateResult === 'string' ? generateResult : JSON.stringify(generateResult, null, 2)}</pre>
+                                <div class="mt-3">
+                                    <a class="btn btn-sm btn-outline-secondary" href="/result">Open result page</a>
+                                </div>
+                            </div>
                     {#if loadSuccess}
                         <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
                             {loadSuccess}

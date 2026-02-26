@@ -7,7 +7,7 @@ This is the backend service for the Timetable Generator application, a Spring Bo
 The Timetable Generator backend provides a REST API for:
 - Authenticating users
 - Generating timetables while considering room availability, avoiding conflicts, and honoring presenter preferences.
-- ~~Storing a user's created timetables~~
+- Storing a user's created timetables
 
 ## Technologies Used
 - **Java 17**: The application is built with Java and requires JDK 17+.

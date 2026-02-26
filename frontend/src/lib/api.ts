@@ -53,3 +53,88 @@ export async function login(email: string, password: string): Promise<AuthRespon
 		return { error: `Network error: ${err instanceof Error ? err.message : 'Unknown error'}` };
 	}
 }
+
+// ─── Timetable interfaces ────────────────────────────────────────────────────
+
+export interface TimetableListItem {
+	id: string;
+	name: string;
+	createdAt: string;
+}
+
+export interface TimetableDetail {
+	id: string;
+	name: string;
+	createdAt: string;
+	timetableJson: string;
+}
+
+export interface TimetableResponse {
+	data?: TimetableListItem[] | TimetableDetail;
+	error?: string;
+}
+
+// ─── Timetable API helpers ───────────────────────────────────────────────────
+
+export async function getTimetables(token: string): Promise<{ data?: TimetableListItem[]; error?: string }> {
+	try {
+		const response = await fetch(`${PUBLIC_API_URL}/api/timetables`, {
+			headers: { Authorization: `Bearer ${token}` }
+		});
+		if (!response.ok) {
+			const err = await response.json().catch(() => ({ message: 'Failed to fetch timetables' }));
+			return { error: err.message || `Server error ${response.status}` };
+		}
+		return { data: await response.json() };
+	} catch (err) {
+		return { error: `Network error: ${err instanceof Error ? err.message : 'Unknown error'}` };
+	}
+}
+
+export async function getTimetable(id: string, token: string): Promise<{ data?: TimetableDetail; error?: string }> {
+	try {
+		const response = await fetch(`${PUBLIC_API_URL}/api/timetables/${id}`, {
+			headers: { Authorization: `Bearer ${token}` }
+		});
+		if (!response.ok) {
+			const err = await response.json().catch(() => ({ message: 'Failed to fetch timetable' }));
+			return { error: err.message || `Server error ${response.status}` };
+		}
+		return { data: await response.json() };
+	} catch (err) {
+		return { error: `Network error: ${err instanceof Error ? err.message : 'Unknown error'}` };
+	}
+}
+
+export async function deleteTimetable(id: string, token: string): Promise<{ error?: string }> {
+	try {
+		const response = await fetch(`${PUBLIC_API_URL}/api/timetables/${id}`, {
+			method: 'DELETE',
+			headers: { Authorization: `Bearer ${token}` }
+		});
+		if (!response.ok) {
+			const err = await response.json().catch(() => ({ message: 'Failed to delete timetable' }));
+			return { error: err.message || `Server error ${response.status}` };
+		}
+		return {};
+	} catch (err) {
+		return { error: `Network error: ${err instanceof Error ? err.message : 'Unknown error'}` };
+	}
+}
+
+export async function renameTimetable(id: string, newName: string, token: string): Promise<{ error?: string }> {
+	try {
+		const url = `${PUBLIC_API_URL}/api/timetables/${id}?name=${encodeURIComponent(newName)}`;
+		const response = await fetch(url, {
+			method: 'PATCH',
+			headers: { Authorization: `Bearer ${token}` }
+		});
+		if (!response.ok) {
+			const err = await response.json().catch(() => ({ message: 'Failed to rename timetable' }));
+			return { error: err.message || `Server error ${response.status}` };
+		}
+		return {};
+	} catch (err) {
+		return { error: `Network error: ${err instanceof Error ? err.message : 'Unknown error'}` };
+	}
+}

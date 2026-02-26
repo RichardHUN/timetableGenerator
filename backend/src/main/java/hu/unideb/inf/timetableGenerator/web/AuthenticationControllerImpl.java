@@ -19,6 +19,7 @@ import org.springframework.security.core.AuthenticationException;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -32,14 +33,8 @@ public class AuthenticationControllerImpl implements AuthenticationController {
     private JwtServiceImpl jwtService;
     private AuthenticationManager authenticationManager;
 
-
-    @GetMapping("/welcome")
-    public String welcome() {
-        return "Welcome this endpoint is not secure";
-    }
-
     @PostMapping("/register")
-    public ResponseEntity<?> addNewUser(@RequestBody LoginRequestDTO userInfo) {
+    public ResponseEntity<UserInfo> addNewUser(@RequestBody LoginRequestDTO userInfo) {
         log.info("Received request to add new user: {}", userInfo.email());
         try {
             //If no roles are provided, assign a default role (e.g., "ROLE_USER")
@@ -50,7 +45,8 @@ public class AuthenticationControllerImpl implements AuthenticationController {
                 : Authorities.getGrantedAuthorities(userInfo.roles());
             } catch (IllegalArgumentException e) {
                 log.warn("Invalid roles provided for user: {}. Error: {}", userInfo.email(), e.getMessage());
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid roles provided: "+ userInfo.roles() +". Valid roles are: ROLE_USER, ROLE_ADMIN");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Invalid roles provided: "+ userInfo.roles() +". Valid roles are: ROLE_USER, ROLE_ADMIN");
             }
 
             log.info("User registered successfully: {}:{} with roles: {}", userInfo.email(), userInfo.password(), roles);
@@ -67,13 +63,13 @@ public class AuthenticationControllerImpl implements AuthenticationController {
                     );
         } catch (UserAlreadyExistsException e) {
             log.warn("User already exists: {}", userInfo.email());
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("User with this email already exists");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "User with this email already exists");
         }
     }
 
 
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
+    public ResponseEntity<LoginResponseDTO> authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
         log.info("Received authentication request for user: {}:{}", authRequest.getEmail(), authRequest.getPassword());
 
         Authentication authentication;
@@ -83,7 +79,7 @@ public class AuthenticationControllerImpl implements AuthenticationController {
             );
         } catch (AuthenticationException e) {
             log.warn("Authentication failed: {}:{}", authRequest.getEmail(), authRequest.getPassword());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
         }
 
         if (authentication.isAuthenticated()) {
@@ -96,6 +92,6 @@ public class AuthenticationControllerImpl implements AuthenticationController {
         }
 
         log.error("Unexpected error occurred during login. {}:{}", authRequest.getEmail(), authRequest.getPassword());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("We are sorry! An unexpected error occurred during login process. Please try again later!");
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "We are sorry! An unexpected error occurred during login process. Please try again later!");
     }
 }

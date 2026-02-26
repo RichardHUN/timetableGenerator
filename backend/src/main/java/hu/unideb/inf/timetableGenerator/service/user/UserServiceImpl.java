@@ -4,7 +4,10 @@ import hu.unideb.inf.timetableGenerator.entity.UserInfo;
 import hu.unideb.inf.timetableGenerator.repository.UserInfoRepository;
 import hu.unideb.inf.timetableGenerator.service.dao.StandardUserInfoDAO;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -28,4 +31,10 @@ public class UserServiceImpl implements UserService {
             .build();
     }
 
+    @Override
+    public UserInfo getCurrentUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return repository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
+    }
 }
