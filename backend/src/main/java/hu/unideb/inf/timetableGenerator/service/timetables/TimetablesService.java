@@ -14,4 +14,6 @@ public interface TimetablesService {
 
     void deleteTimetable(int id);
 
+    TimetableEntity renameTimetable(int id, String newName) throws IllegalArgumentException;
+
 }

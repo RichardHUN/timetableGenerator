@@ -24,6 +24,9 @@ public class TimetableEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserInfo user;
 
+    @Column
+    private String name;
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 

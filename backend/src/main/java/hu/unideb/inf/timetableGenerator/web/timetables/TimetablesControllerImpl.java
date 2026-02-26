@@ -2,12 +2,11 @@ package hu.unideb.inf.timetableGenerator.web.timetables;
 
 import hu.unideb.inf.timetableGenerator.entity.TimetableEntity;
 import hu.unideb.inf.timetableGenerator.entity.UserInfo;
-import hu.unideb.inf.timetableGenerator.repository.UserInfoRepository;
 import hu.unideb.inf.timetableGenerator.service.timetables.TimetablesService;
 import hu.unideb.inf.timetableGenerator.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -39,5 +38,16 @@ public class TimetablesControllerImpl implements TimetablesController {
         timetablesService.deleteTimetable(id);
     }
 
+    @Override
+    public ResponseEntity<TimetableEntity> renameTimetable(int id, String name) {
+        TimetableEntity result;
+        try {
+            result = timetablesService.renameTimetable(id, name);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Timetable with given ID not found.");
+        }
+
+        return ResponseEntity.ok().body(result);
+    }
 }
 

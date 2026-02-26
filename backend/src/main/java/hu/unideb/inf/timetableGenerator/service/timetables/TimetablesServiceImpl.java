@@ -44,4 +44,13 @@ public class TimetablesServiceImpl implements TimetablesService {
         timetableRepository.deleteById(id);
     }
 
+    @Override
+    public TimetableEntity renameTimetable(int id, String newName) {
+        TimetableEntity timetable = timetableRepository.findById(id).orElseThrow(() -> new IllegalStateException("Timetable not found"));
+
+        timetable.setName(newName);
+        timetableRepository.save(timetable);
+
+        return timetableRepository.findById(id).orElseThrow(() -> new IllegalStateException("Timetable not found"));
+    }
 }
