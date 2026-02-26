@@ -37,6 +37,7 @@ public class TimetablesServiceImpl implements TimetablesService {
             String json = objectMapper.writeValueAsString(output);
             TimetableEntity entity = TimetableEntity.builder()
                     .user(user)
+                    .name("timetable_" + LocalDateTime.now())
                     .createdAt(LocalDateTime.now())
                     .timetableJson(json)
                     .build();
