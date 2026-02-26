@@ -13,6 +13,12 @@ import java.util.List;
 @Builder(toBuilder = true)
 @Data
 public class InputDTO {
+    /**
+     * DTO class that defines the input of the timetable generation.
+     * The week object is calculated from the planned courses,
+     * so it is not necessary to provide it in the input, for that use
+     * {@link SimpleInputDTO}.
+     */
 
     private Week week;
     private List<Room> rooms;
