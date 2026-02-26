@@ -3,7 +3,10 @@ package hu.unideb.inf.timetableGenerator.web;
 import hu.unideb.inf.timetableGenerator.dto.InputDTO;
 import hu.unideb.inf.timetableGenerator.dto.OutputDTO;
 import hu.unideb.inf.timetableGenerator.dto.SimpleInputDTO;
+import hu.unideb.inf.timetableGenerator.entity.UserInfo;
 import hu.unideb.inf.timetableGenerator.service.TimeTableService;
+import hu.unideb.inf.timetableGenerator.service.timetables.TimetablesService;
+import hu.unideb.inf.timetableGenerator.service.user.UserService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class TimeTableControllerImpl implements TimeTableController {
 
     private final TimeTableService timeTableService;
+    private final UserService userService;
+    private final TimetablesService timetablesService;
 
     @Override
     public ResponseEntity<?> healthCheck() {

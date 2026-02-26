@@ -1,0 +1,17 @@
+package hu.unideb.inf.timetableGenerator.service.timetables;
+
+import hu.unideb.inf.timetableGenerator.dto.OutputDTO;
+import hu.unideb.inf.timetableGenerator.entity.TimetableEntity;
+import hu.unideb.inf.timetableGenerator.entity.UserInfo;
+
+import java.util.List;
+
+public interface TimetablesService {
+
+    List<TimetableEntity> getTimetablesForUser(UserInfo user);
+
+    void saveTimetable(UserInfo user, OutputDTO output);
+
+    void deleteTimetable(int id);
+
+}
