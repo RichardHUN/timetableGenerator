@@ -25,7 +25,7 @@ The frontend provides:
 ## Available Routes
 - `/` — Home page
 - `/generate` — Timetable generation page
-- `/generate/result` — Generated timetable display page
+- `/result` — Generated timetable display page
 - `/login` — Login page
 - `/register` — Registration page
 - `/user` — User profile page

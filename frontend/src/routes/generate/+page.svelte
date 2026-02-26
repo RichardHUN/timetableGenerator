@@ -159,7 +159,7 @@
         }
 
         // persist last result so the /generate/result page can read it
-        try {
+            try {
             if (generateResult) {
                 sessionStorage.setItem('lastGenerateResult', JSON.stringify(generateResult));
             }
@@ -170,7 +170,7 @@
         // automatically navigate to the result page when a result is available
         try {
             if (generateResult) {
-                await goto('/generate/result');
+                await goto('/result');
             }
         } catch (e) {
             // ignore navigation errors
@@ -301,7 +301,7 @@
                                 <h6 class="mb-2">Server response</h6>
                                 <pre style="white-space:pre-wrap;word-break:break-word">{typeof generateResult === 'string' ? generateResult : JSON.stringify(generateResult, null, 2)}</pre>
                                 <div class="mt-3">
-                                    <a class="btn btn-sm btn-outline-secondary" href="/generate/result">Open result page</a>
+                                    <a class="btn btn-sm btn-outline-secondary" href="/result">Open result page</a>
                                 </div>
                             </div>
                         </div>
