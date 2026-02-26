@@ -20,13 +20,13 @@ public class TimetablesControllerImpl implements TimetablesController {
     private final UserService userService;
 
     @Override
-    public List<TimetableEntity> getAllTimetables() {
+    public ResponseEntity<List<TimetableEntity>> getAllTimetables() {
         UserInfo user = userService.getCurrentUser();
-        return timetablesService.getTimetablesForUser(user);
+        return ResponseEntity.ok().body(timetablesService.getTimetablesForUser(user));
     }
 
     @Override
-    public void deleteTimetable(int id) {
+    public ResponseEntity<Void> deleteTimetable(int id) {
         UserInfo user = userService.getCurrentUser();
 
         List<TimetableEntity> userTimetables = timetablesService.getTimetablesForUser(user);
@@ -36,6 +36,7 @@ public class TimetablesControllerImpl implements TimetablesController {
         }
 
         timetablesService.deleteTimetable(id);
+        return ResponseEntity.ok().build();
     }
 
     @Override
