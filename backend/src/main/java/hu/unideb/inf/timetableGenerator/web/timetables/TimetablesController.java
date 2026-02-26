@@ -14,6 +14,10 @@ public interface TimetablesController {
     @PreAuthorize("isAuthenticated()")
     ResponseEntity<List<TimetableEntity>> getAllTimetables();
 
+    @GetMapping("/timetables/{id}")
+    @PreAuthorize("isAuthenticated()")
+    ResponseEntity<TimetableEntity> getTimetableById(@PathVariable int id);
+
     @DeleteMapping("/timetables/{id}")
     @PreAuthorize("isAuthenticated()")
     ResponseEntity<Void> deleteTimetable(@PathVariable int id);

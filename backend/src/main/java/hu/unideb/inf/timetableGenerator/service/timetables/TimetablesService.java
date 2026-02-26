@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface TimetablesService {
 
+    TimetableEntity getTimetable(int id) throws IllegalStateException;
+
     List<TimetableEntity> getTimetablesForUser(UserInfo user);
 
     void saveTimetable(UserInfo user, OutputDTO output);

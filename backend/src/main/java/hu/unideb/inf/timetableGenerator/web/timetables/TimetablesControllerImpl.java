@@ -26,6 +26,16 @@ public class TimetablesControllerImpl implements TimetablesController {
     }
 
     @Override
+    public ResponseEntity<TimetableEntity> getTimetableById(int id) {
+        try {
+            return ResponseEntity.ok().body(timetablesService.getTimetable(id));
+        } catch (IllegalStateException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "Timetable with given ID not found or not owned by current user");
+        }
+    }
+
+    @Override
     public ResponseEntity<Void> deleteTimetable(int id) {
         UserInfo user = userService.getCurrentUser();
 

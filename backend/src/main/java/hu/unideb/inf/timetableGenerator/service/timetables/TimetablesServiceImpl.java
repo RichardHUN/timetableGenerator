@@ -20,6 +20,13 @@ public class TimetablesServiceImpl implements TimetablesService {
     private final ObjectMapper objectMapper;
 
     @Override
+    public TimetableEntity getTimetable(int id) throws  IllegalStateException {
+        return timetableRepository.findById(id).orElseThrow(
+                () -> new IllegalStateException("Timetable not found")
+        );
+    }
+
+    @Override
     public List<TimetableEntity> getTimetablesForUser(UserInfo user) {
         return timetableRepository.findAllByUser(user);
     }
