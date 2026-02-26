@@ -6,6 +6,8 @@
 	export let capacity: number | '' = '';
 	// optional initial days passed from parent (array of strings)
 	export let initialDays: string[] = [];
+	// richer initial days: each entry has value (day name) and pre-filled timeWindows
+	export let initialDaysData: Array<{ value: string; timeWindows: string[][] }> = [];
 
 	// each day now includes textual `value` and `timeWindows` array
 	let days: Array<{ id: number; open: boolean; value: string; timeWindows: string[][] }> = [];
@@ -15,7 +17,9 @@
 	const capacityId = `capacity-${uid}`;
 
 	onMount(() => {
-		if (initialDays && initialDays.length) {
+		if (initialDaysData && initialDaysData.length) {
+			days = initialDaysData.map((d, i) => ({ id: Date.now() + i, open: true, value: d.value, timeWindows: d.timeWindows ?? [] }));
+		} else if (initialDays && initialDays.length) {
 			days = initialDays.map((v, i) => ({ id: Date.now() + i, open: true, value: v, timeWindows: [] }));
 		} else {
 			days = [{ id: Date.now(), open: true, value: '', timeWindows: [] }];
