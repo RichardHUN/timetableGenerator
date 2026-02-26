@@ -237,9 +237,8 @@
         min-width: 80px;
     }
 
-    /* Make the table's main "Time" header use the terniary color */
     .timetable thead .time-col {
-        background-color: rgba(177, 61, 0, 1);
+        background-color: rgba(255, 122, 0, 1);
         color: #fff;
         font-weight: 600;
     }
