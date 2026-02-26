@@ -31,6 +31,7 @@ Basic info about the frontend:
 - Provides user authentication (register, login, logout)
 - Timetable generation interface
 - User profile display
+- ~~Stored Timetables view~~
 - Responsive navigation bar with theme toggle
 - Integrates with backend API for authentication and user data
 

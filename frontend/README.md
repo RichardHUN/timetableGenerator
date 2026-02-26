@@ -18,6 +18,7 @@ The frontend provides:
 - Timetable generation interface
 - Display of generated timetable
 - User profile display
+- ~~Stored Timetables view~~
 - Responsive navigation bar with theme toggle
 - Integration with backend API for authentication and user data
 
