@@ -188,6 +188,56 @@
         }
     }
 
+    function exportJSON() {
+        const payload = {
+            rooms: rooms.map((r) => {
+                const data = r.data || {};
+                const days = (data.days || []).map((d: any) => {
+                    const name = typeof d === 'string' ? d : d.value || d.name || '';
+                    const availableWindows = (d.timeWindows || []).map((tw: string[]) =>
+                        tw.map((t: string) => {
+                            const parts = (t || '').split(':').map((x: string) => Number(x));
+                            return { hour: Number.isFinite(parts[0]) ? parts[0] : 0, minute: Number.isFinite(parts[1]) ? parts[1] : 0 };
+                        })
+                    );
+                    return { name, availableWindows };
+                });
+                return {
+                    roomNumber: String(data.roomNumber ?? ''),
+                    capacity: Number(data.capacity) || 0,
+                    week: { days }
+                };
+            }),
+            plannedCourses: plannedCourses.map((p) => {
+                const d = p.data || {};
+                return {
+                    name: d.name || '',
+                    presenterName: d.presenterName || '',
+                    numberOfListeners: Number(d.numberOfListeners) || 0,
+                    durationHours: Number(d.durationHours) || 0,
+                    durationMinutes: Number(d.durationMinutes) || 0
+                };
+            }),
+            preferences: preferences.map((pref) => {
+                const d = pref.data || {};
+                return {
+                    strictness: Number(d.strictness) || 0,
+                    presenterName: d.presenterName || '',
+                    constraint: d.constraint || '',
+                    value: d.value === undefined || d.value === null ? '' : d.value
+                };
+            })
+        };
+
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'timetable-input.json';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
     async function generateFromInputs() {
         generating = true;
         generateResult = null;
@@ -442,7 +492,8 @@
                 {/if}
             </div>
 
-            <div class="mt-4 d-flex justify-content-center">
+            <div class="mt-4 d-flex justify-content-center gap-3">
+                <button class="btn btn-outline-secondary shadow pop-button" type="button" on:click={exportJSON}>Export JSON</button>
                 <button class="btn btn-primary shadow pop-button" type="button" on:click={generateFromInputs} disabled={generating}>Generate!</button>
             </div>
 
