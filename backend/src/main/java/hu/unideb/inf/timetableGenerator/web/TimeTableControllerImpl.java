@@ -3,6 +3,7 @@ package hu.unideb.inf.timetableGenerator.web;
 import hu.unideb.inf.timetableGenerator.dto.InputDTO;
 import hu.unideb.inf.timetableGenerator.dto.OutputDTO;
 import hu.unideb.inf.timetableGenerator.dto.SimpleInputDTO;
+import hu.unideb.inf.timetableGenerator.entity.TimetableEntity;
 import hu.unideb.inf.timetableGenerator.service.TimeTableService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class TimeTableControllerImpl implements TimeTableController {
     }
 
     @Override
-    public ResponseEntity<OutputDTO> generateTimeTable(@RequestBody @NonNull InputDTO input) {
+    public ResponseEntity<TimetableEntity> generateTimeTable(@RequestBody @NonNull InputDTO input) {
         log.info("Timetable generation requested received");
 
         log.info(input.toString());
@@ -37,7 +38,7 @@ public class TimeTableControllerImpl implements TimeTableController {
         }
 
         try {
-            OutputDTO output = timeTableService.generateTimeTable(input);
+            TimetableEntity output = timeTableService.generateTimeTable(input);
             log.info("Timetable generated successfully");
             return ResponseEntity.ok(output);
         } catch (IllegalStateException e) {
@@ -52,18 +53,18 @@ public class TimeTableControllerImpl implements TimeTableController {
     }
 
     @Override
-    public ResponseEntity<OutputDTO> generateTimeTableFromSimpleInput(@NonNull SimpleInputDTO input) {
+    public ResponseEntity<TimetableEntity> generateTimeTableFromSimpleInput(@NonNull SimpleInputDTO input) {
         log.info("Timetable generation requested received(simple)");
 
         log.info(input.toString());
 
         if( input.getPlannedCourses() == null || input.getRooms() == null || input.getPreferences() == null ) {
-            log.error( "Invalid input. Missing parameters");
+            log.error("Invalid input. Missing parameters");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid input. Missing parameters.");
         }
 
         try {
-            OutputDTO output = timeTableService.generateTimeTableFromSimpleInput(input);
+            TimetableEntity output = timeTableService.generateTimeTableFromSimpleInput(input);
             log.info("Timetable generated successfully");
             return ResponseEntity.ok(output);
         } catch (IllegalStateException e) {

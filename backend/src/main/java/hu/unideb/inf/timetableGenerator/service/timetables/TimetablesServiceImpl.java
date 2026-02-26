@@ -32,7 +32,7 @@ public class TimetablesServiceImpl implements TimetablesService {
     }
 
     @Override
-    public void saveTimetable(UserInfo user, OutputDTO output) {
+    public TimetableEntity saveTimetable(UserInfo user, OutputDTO output) {
         try {
             String json = objectMapper.writeValueAsString(output);
             TimetableEntity entity = TimetableEntity.builder()
@@ -41,7 +41,7 @@ public class TimetablesServiceImpl implements TimetablesService {
                     .createdAt(LocalDateTime.now())
                     .timetableJson(json)
                     .build();
-            timetableRepository.save(entity);
+            return timetableRepository.save(entity);
         } catch (JsonProcessingException e) {
             throw new IllegalStateException("Failed to serialize timetable", e);
         }

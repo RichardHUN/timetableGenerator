@@ -45,6 +45,9 @@
                     <a href="/generate" class="nav-link">Generate</a>
                 </li>
                 <li class="nav-item">
+                    <a href="/timetables" class="nav-link">Timetables</a>
+                </li>
+                <li class="nav-item">
                     <a href="/login" class="nav-link">Login</a>
                 </li>
                 <li class="nav-item">

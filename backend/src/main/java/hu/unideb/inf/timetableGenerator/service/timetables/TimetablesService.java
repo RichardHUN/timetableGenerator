@@ -12,7 +12,7 @@ public interface TimetablesService {
 
     List<TimetableEntity> getTimetablesForUser(UserInfo user);
 
-    void saveTimetable(UserInfo user, OutputDTO output);
+    TimetableEntity saveTimetable(UserInfo user, OutputDTO output);
 
     void deleteTimetable(int id);
 

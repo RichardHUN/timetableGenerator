@@ -262,7 +262,7 @@
 
         try {
             if (generateResult) {
-                await goto('/generate/result');
+                await goto('/result');
             }
         } catch (e) {}
     }

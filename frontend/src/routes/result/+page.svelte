@@ -4,6 +4,10 @@
 
 <script lang="ts">
     import { onMount } from 'svelte';
+    import { page } from '$app/stores';
+    import { getTimetable, renameTimetable } from '$lib/api';
+
+    function focusOnMount(node: HTMLElement) { node.focus(); }
 
     interface Time { hour: number; minute: number; }
     interface Day { name: string; availableWindows: Time[][]; }
@@ -27,6 +31,31 @@
 
     let timetableOpen = true;
     let scheduledOpen = true;
+
+    // API-loaded timetable metadata
+    let timetableName: string | null = null;
+    let timetableId: string | null = null;
+    let renamingTitle = false;
+    let renameTitleValue = '';
+
+    async function startRenameTitle() {
+        renameTitleValue = timetableName ?? '';
+        renamingTitle = true;
+    }
+
+    async function confirmRenameTitle() {
+        const trimmed = renameTitleValue.trim();
+        if (trimmed && trimmed !== timetableName && timetableId) {
+            const token = localStorage.getItem('token') ?? '';
+            await renameTimetable(timetableId, trimmed, token);
+            timetableName = trimmed;
+        }
+        renamingTitle = false;
+    }
+
+    function cancelRenameTitle() {
+        renamingTitle = false;
+    }
 
     let days: string[] = [];
     let timeSlots: number[] = [];
@@ -97,17 +126,48 @@
         return Math.max(...coursesAtSlot.map(getCourseRowspan));
     }
 
-    onMount(() => {
-        try {
-            const raw = sessionStorage.getItem('lastGenerateResult');
-            if (raw) {
-                result = JSON.parse(raw) as Result;
-                buildTimetable(result);
-            } else {
-                error = 'No result found. Generate something first.';
+    onMount(async () => {
+        const idParam = $page.url.searchParams.get('id');
+        if (idParam) {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                error = 'You are not authorised. Please log in and try again.';
+                return;
             }
-        } catch (e) {
-            error = 'Failed to read or parse stored result.';
+            const res = await getTimetable(idParam, token);
+            if (res.error) {
+                error = res.error;
+            } else if (res.data) {
+                timetableId = res.data.id;
+                timetableName = res.data.name;
+                try {
+                    result = JSON.parse(res.data.timetableJson) as Result;
+                    buildTimetable(result);
+                } catch (e) {
+                    error = 'Failed to parse timetable data.';
+                }
+            }
+        } else {
+            try {
+                const raw = sessionStorage.getItem('lastGenerateResult');
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    // Backend now returns a TimetableEntity with timetableJson
+                    if (parsed?.timetableJson) {
+                        timetableId = String(parsed.id);
+                        timetableName = parsed.name ?? null;
+                        result = JSON.parse(parsed.timetableJson) as Result;
+                    } else {
+                        // Legacy: raw result object
+                        result = parsed as Result;
+                    }
+                    buildTimetable(result);
+                } else {
+                    error = 'No result found. Generate something first.';
+                }
+            } catch (e) {
+                error = 'Failed to read or parse stored result.';
+            }
         }
     });
 </script>
@@ -116,6 +176,24 @@
     <div class="card shadow-sm">
         <div class="card-body p-4">
             <h1 class="h2 mb-4 page-title">Generated Timetable</h1>
+
+            {#if timetableId}
+                <div class="timetable-name-bar mb-4 d-flex align-items-center gap-2">
+                    {#if renamingTitle}
+                        <input
+                            class="form-control form-control-sm rename-title-input"
+                            type="text"
+                            bind:value={renameTitleValue}
+                            on:keydown={(e) => { if (e.key === 'Enter') confirmRenameTitle(); if (e.key === 'Escape') cancelRenameTitle(); }}
+                            on:blur={confirmRenameTitle}
+                            use:focusOnMount
+                        />
+                    {:else}
+                        <span class="timetable-display-name">{timetableName}</span>
+                        <button class="btn btn-sm btn-outline-secondary rename-title-btn" type="button" on:click={startRenameTitle} title="Rename timetable">✏️</button>
+                    {/if}
+                </div>
+            {/if}
 
     {#if error}
         <div class="alert alert-warning">{error}</div>
@@ -438,4 +516,13 @@
     :global(html[data-theme="dark"]) .course-list-time {
         color: #94a3b8;
     }
+
+    /* Timetable name bar */
+    .timetable-name-bar { border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 0.75rem; }
+    .timetable-display-name { font-size: 1.15rem; font-weight: 600; color: var(--accent, #4f46e5); }
+    .rename-title-btn { padding: 0.15rem 0.45rem; font-size: 0.85rem; }
+    .rename-title-input { max-width: 400px; }
+
+    :global(html[data-theme="dark"]) .timetable-name-bar { border-bottom-color: rgba(255,255,255,0.12); }
+    :global(html[data-theme="dark"]) .timetable-display-name { color: var(--accent, #818cf8); }
 </style>

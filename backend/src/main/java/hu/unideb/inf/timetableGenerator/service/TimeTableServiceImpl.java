@@ -5,6 +5,7 @@ import hu.unideb.inf.timetableGenerator.domain.model.Week;
 import hu.unideb.inf.timetableGenerator.dto.InputDTO;
 import hu.unideb.inf.timetableGenerator.dto.OutputDTO;
 import hu.unideb.inf.timetableGenerator.dto.SimpleInputDTO;
+import hu.unideb.inf.timetableGenerator.entity.TimetableEntity;
 import hu.unideb.inf.timetableGenerator.entity.UserInfo;
 import hu.unideb.inf.timetableGenerator.repository.UserInfoRepository;
 import hu.unideb.inf.timetableGenerator.service.timetables.TimetablesService;
@@ -28,14 +29,13 @@ public class TimeTableServiceImpl implements TimeTableService {
     private final UserInfoRepository userInfoRepository;
 
     @Override
-    public OutputDTO generateTimeTable(@NonNull InputDTO input) {
+    public TimetableEntity generateTimeTable(@NonNull InputDTO input) {
         OutputDTO output = timeTableGenerator.generate(input);
-        saveForCurrentUser(output);
-        return output;
+        return saveForCurrentUser(output);
     }
 
     @Override
-    public OutputDTO generateTimeTableFromSimpleInput(@NonNull SimpleInputDTO input) {
+    public TimetableEntity generateTimeTableFromSimpleInput(@NonNull SimpleInputDTO input) {
         Week week = buildCombinedWeek(input.getRooms());
 
         InputDTO fullInput =
@@ -48,16 +48,16 @@ public class TimeTableServiceImpl implements TimeTableService {
 
         OutputDTO output = timeTableGenerator.generate(fullInput);
         log.info("Timetable generated successfully");
-        saveForCurrentUser(output);
+        TimetableEntity result = saveForCurrentUser(output);
         log.info("Timetable persisted to DB successfully");
-        return output;
+        return result;
     }
 
-    private void saveForCurrentUser(OutputDTO output) {
+    private TimetableEntity saveForCurrentUser(OutputDTO output) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         UserInfo user = userInfoRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("Authenticated user not found: " + email));
-        timetablesService.saveTimetable(user, output);
+        return timetablesService.saveTimetable(user, output);
     }
 
 }

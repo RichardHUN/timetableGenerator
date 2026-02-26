@@ -3,6 +3,7 @@ package hu.unideb.inf.timetableGenerator.web;
 import hu.unideb.inf.timetableGenerator.dto.InputDTO;
 import hu.unideb.inf.timetableGenerator.dto.OutputDTO;
 import hu.unideb.inf.timetableGenerator.dto.SimpleInputDTO;
+import hu.unideb.inf.timetableGenerator.entity.TimetableEntity;
 import lombok.NonNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,9 +16,9 @@ public interface TimeTableController {
     ResponseEntity<String> healthCheck();
 
     @PostMapping("/api/generate")
-    ResponseEntity<OutputDTO> generateTimeTable(@RequestBody @NonNull InputDTO input);
+    ResponseEntity<TimetableEntity> generateTimeTable(@RequestBody @NonNull InputDTO input);
 
     @PostMapping("/api/generate/simple")
-    ResponseEntity<OutputDTO> generateTimeTableFromSimpleInput(@RequestBody @NonNull SimpleInputDTO input);
+    ResponseEntity<TimetableEntity> generateTimeTableFromSimpleInput(@RequestBody @NonNull SimpleInputDTO input);
 
 }
