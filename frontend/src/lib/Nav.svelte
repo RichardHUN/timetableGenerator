@@ -45,6 +45,9 @@
                     <a href="/generate" class="nav-link">Generate</a>
                 </li>
                 <li class="nav-item">
+                    <a href="/timetables" class="nav-link">Timetables</a>
+                </li>
+                <li class="nav-item">
                     <a href="/login" class="nav-link">Login</a>
                 </li>
                 <li class="nav-item">
@@ -60,7 +63,18 @@
                     </button>
                 </li>
                 <li class="nav-item">
-                    <a href="/user" class="btn btn-outline-secondary" aria-label="User">👤</a>
+                    <a href="/user" class="btn btn-outline-secondary" aria-label="User">
+                        {#if theme === 'dark'}
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+                                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                            </svg>
+                        {:else}
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+                                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                            </svg>
+                            <!--👤-->
+                        {/if}
+                        </a>
                 </li>
             </ul>
         </div>
@@ -100,4 +114,9 @@
     :global(html[data-theme="light"]) .navbar-toggler-icon {
         filter: invert(1);
     }
+
+    svg:hover {
+        color: rgba(255, 122, 0, 1) !important;
+    }
+
 </style>

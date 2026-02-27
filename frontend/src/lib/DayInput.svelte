@@ -1,5 +1,6 @@
 <script lang="ts">
   import TimeWindow from './TimeWindow.svelte';
+  import InfoTooltip from './InfoTooltip.svelte';
   import { createEventDispatcher } from 'svelte';
 
   export let label: string = 'Day';
@@ -36,6 +37,7 @@
 
   // notify parent when value or timeWindows change
   $: dispatch('change', { value, timeWindows });
+
 </script>
 
 <div class="day-input day-frame mb-2 p-3">
@@ -57,8 +59,15 @@
     {/each}
   </div>
 
-  <div class="mt-2">
+  <div class="mt-2 d-flex align-items-center gap-2" style="position: relative;">
     <button class="btn btn-sm btn-outline-primary" on:click={addTimeWindow}>+ Time Window</button>
+    <InfoTooltip>
+      <h6 class="card-title mb-2">How to use Time Windows</h6>
+      <ul class="mb-0 ps-3">
+        <li>Time Windows represent a continuous time range</li>
+        <li>If there are no breaks in the day, define only one Time Window</li>
+      </ul>
+    </InfoTooltip>
   </div>
 </div>
 
@@ -101,4 +110,5 @@
     border-color: rgba(255,255,255,0.06);
     background: #07101a;
   }
+
 </style>

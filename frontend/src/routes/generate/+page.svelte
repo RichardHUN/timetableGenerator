@@ -24,6 +24,29 @@
     let generating = false;
     let generateResult: any = null;
     let generateError: string | null = null;
+    let loadSuccess: string | null = null;
+
+    function formatHHMM(hour: number, minute: number): string {
+        return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+    }
+
+    function parsePreference(raw: any): { strictness: number; presenterName: string; constraint: string; value: any } {
+        if (typeof raw === 'string') {
+            const parts = raw.split(':');
+            return {
+                strictness: Number(parts[0]) || 3,
+                presenterName: parts[1] ?? '',
+                constraint: parts[2] ?? 'noClassesOnDay',
+                value: parts.slice(3).join(':') ?? ''
+            };
+        }
+        return {
+            strictness: Number(raw?.strictness) || 3,
+            presenterName: raw?.presenterName ?? '',
+            constraint: raw?.constraint ?? 'noClassesOnDay',
+            value: raw?.value ?? ''
+        };
+    }
 
     function friendlyError(raw: string): string {
         if (!raw) return '';
@@ -91,8 +114,29 @@
         preferences = preferences.filter((p) => p.id !== id);
     }
 
+    function moveItem<T>(arr: T[], from: number, dir: -1 | 1): T[] {
+        const to = from + dir;
+        if (to < 0 || to >= arr.length) return arr;
+        const result = arr.slice();
+        const [item] = result.splice(from, 1);
+        result.splice(to, 0, item);
+        return result;
+    }
+
+    function movePlannedCourse(i: number, dir: -1 | 1) {
+        plannedCourses = moveItem(plannedCourses, i, dir);
+    }
+
+    function movePreference(i: number, dir: -1 | 1) {
+        preferences = moveItem(preferences, i, dir);
+    }
+
+    function moveRoom(i: number, dir: -1 | 1) {
+        rooms = moveItem(rooms, i, dir);
+    }
+
     function onRoomChange(i: number, e: CustomEvent) {
-        rooms[i].data = e.detail;
+        rooms[i].data = { ...e.detail, initialDaysData: rooms[i].data?.initialDaysData };
         // trigger reactivity
         rooms = rooms.slice();
     }
@@ -102,79 +146,117 @@
         const file = input?.files?.[0];
         if (!file) return;
 
-        generating = true;
-        generateResult = null;
         generateError = null;
+        loadSuccess = null;
 
-            try {
+        try {
             const text = await file.text();
 
-            // validate JSON locally first to catch parse errors before sending
             let payload: any = null;
             try {
                 payload = JSON.parse(text);
             } catch (parseErr) {
                 generateError = `Invalid JSON file: ${parseErr instanceof Error ? parseErr.message : String(parseErr)}`;
-                generating = false;
                 if (input) input.value = '';
                 return;
             }
 
-            const token = localStorage.getItem('token');
-            const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-            if (token) headers['Authorization'] = `Bearer ${token}`;
-
-            // helpful debug log for developer console
-            console.debug('Sending /api/generate payload:', payload);
-
-            const res = await fetch(`${PUBLIC_API_URL}/api/generate/simple`, {
-                method: 'POST',
-                headers,
-                body: JSON.stringify(payload)
+            // Map rooms
+            rooms = (payload.rooms ?? []).map((r: any, ri: number) => {
+                const initialDaysData = (r.week?.days ?? []).map((d: any) => ({
+                    value: d.name ?? '',
+                    timeWindows: (d.availableWindows ?? []).map((win: any[]) =>
+                        win.map((t: any) => formatHHMM(t.hour ?? 0, t.minute ?? 0))
+                    )
+                }));
+                return {
+                    id: Date.now() + ri,
+                    open: true,
+                    data: {
+                        roomNumber: r.roomNumber ?? '',
+                        capacity: r.capacity ?? '',
+                        initialDaysData,
+                        days: initialDaysData
+                    }
+                };
             });
 
-            const contentType = res.headers.get('content-type') || '';
-
-            if (!res.ok) {
-                // try to parse response body as JSON for better error details
-                let errText = '';
-                try {
-                    const jsonErr = await res.json();
-                    errText = typeof jsonErr === 'string' ? jsonErr : JSON.stringify(jsonErr);
-                } catch (_) {
-                    errText = await res.text().catch(() => res.statusText || '');
+            // Map planned courses
+            plannedCourses = (payload.plannedCourses ?? []).map((c: any, ci: number) => ({
+                id: Date.now() + 10000 + ci,
+                open: true,
+                data: {
+                    name: c.name ?? '',
+                    presenterName: c.presenterName ?? '',
+                    numberOfListeners: Number(c.numberOfListeners) || 0,
+                    durationHours: Number(c.durationHours) || 0,
+                    durationMinutes: Number(c.durationMinutes) || 0
                 }
-                console.warn('Server responded with error', res.status, errText);
-                generateError = `Server error: ${res.status} ${errText}`;
-            } else if (contentType.includes('application/json')) {
-                generateResult = await res.json();
-            } else {
-                generateResult = await res.text();
-            }
+            }));
+
+            // Map preferences
+            preferences = (payload.preferences ?? []).map((p: any, pi: number) => ({
+                id: Date.now() + 20000 + pi,
+                open: true,
+                data: parsePreference(p)
+            }));
+
+            loadSuccess = `Loaded ${rooms.length} room${rooms.length !== 1 ? 's' : ''}, ${plannedCourses.length} course${plannedCourses.length !== 1 ? 's' : ''}, ${preferences.length} preference${preferences.length !== 1 ? 's' : ''}. Review and edit below, then click Generate!`;
         } catch (err) {
-            generateError = `Network error: ${err instanceof Error ? err.message : String(err)}`;
+            generateError = `Could not parse file: ${err instanceof Error ? err.message : String(err)}`;
         } finally {
-            generating = false;
             if (input) input.value = '';
         }
+    }
 
-        // persist last result so the /generate/result page can read it
-        try {
-            if (generateResult) {
-                sessionStorage.setItem('lastGenerateResult', JSON.stringify(generateResult));
-            }
-        } catch (e) {
-            // ignore storage errors
-        }
+    function exportJSON() {
+        const payload = {
+            rooms: rooms.map((r) => {
+                const data = r.data || {};
+                const days = (data.days || []).map((d: any) => {
+                    const name = typeof d === 'string' ? d : d.value || d.name || '';
+                    const availableWindows = (d.timeWindows || []).map((tw: string[]) =>
+                        tw.map((t: string) => {
+                            const parts = (t || '').split(':').map((x: string) => Number(x));
+                            return { hour: Number.isFinite(parts[0]) ? parts[0] : 0, minute: Number.isFinite(parts[1]) ? parts[1] : 0 };
+                        })
+                    );
+                    return { name, availableWindows };
+                });
+                return {
+                    roomNumber: String(data.roomNumber ?? ''),
+                    capacity: Number(data.capacity) || 0,
+                    week: { days }
+                };
+            }),
+            plannedCourses: plannedCourses.map((p) => {
+                const d = p.data || {};
+                return {
+                    name: d.name || '',
+                    presenterName: d.presenterName || '',
+                    numberOfListeners: Number(d.numberOfListeners) || 0,
+                    durationHours: Number(d.durationHours) || 0,
+                    durationMinutes: Number(d.durationMinutes) || 0
+                };
+            }),
+            preferences: preferences.map((pref) => {
+                const d = pref.data || {};
+                return {
+                    strictness: Number(d.strictness) || 0,
+                    presenterName: d.presenterName || '',
+                    constraint: d.constraint || '',
+                    value: d.value === undefined || d.value === null ? '' : d.value
+                };
+            })
+        };
 
-        // automatically navigate to the result page when a result is available
-        try {
-            if (generateResult) {
-                await goto('/generate/result');
-            }
-        } catch (e) {
-            // ignore navigation errors
-        }
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'timetable-input.json';
+        a.click();
+        URL.revokeObjectURL(url);
     }
 
     async function generateFromInputs() {
@@ -262,7 +344,7 @@
 
         try {
             if (generateResult) {
-                await goto('/generate/result');
+                await goto('/result');
             }
         } catch (e) {}
     }
@@ -301,9 +383,16 @@
                                 <h6 class="mb-2">Server response</h6>
                                 <pre style="white-space:pre-wrap;word-break:break-word">{typeof generateResult === 'string' ? generateResult : JSON.stringify(generateResult, null, 2)}</pre>
                                 <div class="mt-3">
-                                    <a class="btn btn-sm btn-outline-secondary" href="/generate/result">Open result page</a>
+                                    <a class="btn btn-sm btn-outline-secondary" href="/result">Open result page</a>
                                 </div>
                             </div>
+                        </div>
+                    {/if}
+
+                    {#if loadSuccess}
+                        <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+                            {loadSuccess}
+                            <button type="button" class="btn-close" aria-label="Close" on:click={() => loadSuccess = null}></button>
                         </div>
                     {/if}
                 </div>
@@ -337,7 +426,11 @@
                                     <span class="fold-chevron" class:open={course.open}>&#9654;</span>
                                     <span class="item-summary">{course.data.name || 'New Course'}{course.data.presenterName ? ' — ' + course.data.presenterName : ''}</span>
                                 </div>
-                                <button class="btn btn-sm btn-outline-danger" type="button" on:click|stopPropagation={() => removePlannedCourse(course.id)} aria-label="Remove course">Remove</button>
+                                <div class="d-flex gap-1 align-items-center">
+                                    <button class="btn btn-sm btn-outline-secondary" type="button" on:click|stopPropagation={() => movePlannedCourse(i, -1)} disabled={i === 0} aria-label="Move course up">▲</button>
+                                    <button class="btn btn-sm btn-outline-secondary" type="button" on:click|stopPropagation={() => movePlannedCourse(i, 1)} disabled={i === plannedCourses.length - 1} aria-label="Move course down">▼</button>
+                                    <button class="btn btn-sm btn-outline-danger" type="button" on:click|stopPropagation={() => removePlannedCourse(course.id)} aria-label="Remove course">Remove</button>
+                                </div>
                             </div>
                             {#if course.open}
                                 <div class="p-2">
@@ -380,7 +473,11 @@
                                     <span class="fold-chevron" class:open={pref.open}>&#9654;</span>
                                     <span class="item-summary">{pref.data.presenterName || 'New Preference'}{pref.data.constraint ? ' — ' + pref.data.constraint : ''}</span>
                                 </div>
-                                <button class="btn btn-sm btn-outline-danger" type="button" on:click|stopPropagation={() => removePreference(pref.id)} aria-label="Remove preference">Remove</button>
+                                <div class="d-flex gap-1 align-items-center">
+                                    <button class="btn btn-sm btn-outline-secondary" type="button" on:click|stopPropagation={() => movePreference(i, -1)} disabled={i === 0} aria-label="Move preference up">▲</button>
+                                    <button class="btn btn-sm btn-outline-secondary" type="button" on:click|stopPropagation={() => movePreference(i, 1)} disabled={i === preferences.length - 1} aria-label="Move preference down">▼</button>
+                                    <button class="btn btn-sm btn-outline-danger" type="button" on:click|stopPropagation={() => removePreference(pref.id)} aria-label="Remove preference">Remove</button>
+                                </div>
                             </div>
                             {#if pref.open}
                                 <div class="p-2">
@@ -422,7 +519,11 @@
                                     <span class="fold-chevron" class:open={room.open}>&#9654;</span>
                                     <span class="item-summary">{room.data?.roomNumber || 'New Room'}{room.data?.capacity ? ' — capacity: ' + room.data.capacity : ''}</span>
                                 </div>
-                                <button class="btn btn-sm btn-outline-danger" type="button" on:click|stopPropagation={() => removeRoom(room.id)} aria-label="Remove room">Remove</button>
+                                <div class="d-flex gap-1 align-items-center">
+                                    <button class="btn btn-sm btn-outline-secondary" type="button" on:click|stopPropagation={() => moveRoom(i, -1)} disabled={i === 0} aria-label="Move room up">▲</button>
+                                    <button class="btn btn-sm btn-outline-secondary" type="button" on:click|stopPropagation={() => moveRoom(i, 1)} disabled={i === rooms.length - 1} aria-label="Move room down">▼</button>
+                                    <button class="btn btn-sm btn-outline-danger" type="button" on:click|stopPropagation={() => removeRoom(room.id)} aria-label="Remove room">Remove</button>
+                                </div>
                             </div>
                             {#if room.open}
                                 <div class="p-2">
@@ -430,6 +531,7 @@
                                         roomNumber={room.data?.roomNumber || ''}
                                         capacity={room.data?.capacity ?? ''}
                                         initialDays={room.data?.days || []}
+                                        initialDaysData={room.data?.initialDaysData || []}
                                         on:change={(e) => onRoomChange(i, e)}
                                     />
                                 </div>
@@ -439,7 +541,18 @@
                 {/if}
             </div>
 
-            <div class="mt-4 d-flex justify-content-center">
+            <div class="mt-3 d-flex justify-content-center">
+                <a href="/docs" class="btn btn-outline-info shadow pop-button" aria-label="How to use">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-info-circle me-1" viewBox="0 0 16 16" aria-hidden="true">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                        <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
+                    </svg>
+                    How to use
+                </a>
+            </div>
+
+            <div class="mt-3 d-flex justify-content-center gap-3">
+                <button class="btn btn-outline-secondary shadow pop-button" type="button" on:click={exportJSON}>Export JSON</button>
                 <button class="btn btn-primary shadow pop-button" type="button" on:click={generateFromInputs} disabled={generating}>Generate!</button>
             </div>
 

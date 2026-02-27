@@ -1,0 +1,29 @@
+package hu.unideb.inf.timetableGenerator.web.timetables;
+
+import hu.unideb.inf.timetableGenerator.entity.TimetableEntity;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RequestMapping("/api")
+public interface TimetablesController {
+
+    @GetMapping("/timetables")
+    @PreAuthorize("isAuthenticated()")
+    ResponseEntity<List<TimetableEntity>> getAllTimetables();
+
+    @GetMapping("/timetables/{id}")
+    @PreAuthorize("isAuthenticated()")
+    ResponseEntity<TimetableEntity> getTimetableById(@PathVariable int id);
+
+    @DeleteMapping("/timetables/{id}")
+    @PreAuthorize("isAuthenticated()")
+    ResponseEntity<Void> deleteTimetable(@PathVariable int id);
+
+    @PatchMapping("/timetables/{id}")
+    @PreAuthorize("isAuthenticated()")
+    ResponseEntity<?> renameTimetable(@PathVariable int id, @RequestParam String name);
+
+}

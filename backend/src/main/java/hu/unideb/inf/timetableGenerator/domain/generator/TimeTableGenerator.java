@@ -99,6 +99,13 @@ public class TimeTableGenerator {
 
                                 Time endTime = startTime.plus(plannedCourse.durationHours(), plannedCourse.durationMinutes());
 
+                                if( endTime.isLaterThan(
+                                        roomTimeWindow.getLast().plus(1, 0)
+                                    )
+                                ) {
+                                    continue;
+                                }
+
                                 Room roomCopy = room.clone();
                                 roomCopy.occupy(roomDay, startTime, endTime);
 

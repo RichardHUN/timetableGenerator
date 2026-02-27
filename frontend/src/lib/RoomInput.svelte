@@ -6,6 +6,8 @@
 	export let capacity: number | '' = '';
 	// optional initial days passed from parent (array of strings)
 	export let initialDays: string[] = [];
+	// richer initial days: each entry has value (day name) and pre-filled timeWindows
+	export let initialDaysData: Array<{ value: string; timeWindows: string[][] }> = [];
 
 	// each day now includes textual `value` and `timeWindows` array
 	let days: Array<{ id: number; open: boolean; value: string; timeWindows: string[][] }> = [];
@@ -15,7 +17,9 @@
 	const capacityId = `capacity-${uid}`;
 
 	onMount(() => {
-		if (initialDays && initialDays.length) {
+		if (initialDaysData && initialDaysData.length) {
+			days = initialDaysData.map((d, i) => ({ id: Date.now() + i, open: true, value: d.value, timeWindows: d.timeWindows ?? [] }));
+		} else if (initialDays && initialDays.length) {
 			days = initialDays.map((v, i) => ({ id: Date.now() + i, open: true, value: v, timeWindows: [] }));
 		} else {
 			days = [{ id: Date.now(), open: true, value: '', timeWindows: [] }];
@@ -34,6 +38,16 @@
 
 	function toggleDay(id: number) {
 		days = days.map(d => d.id === id ? { ...d, open: !d.open } : d);
+	}
+
+	function moveDay(from: number, dir: -1 | 1) {
+		const to = from + dir;
+		if (to < 0 || to >= days.length) return;
+		const result = days.slice();
+		const [item] = result.splice(from, 1);
+		result.splice(to, 0, item);
+		days = result;
+		dispatch('change', { roomNumber, capacity, days });
 	}
 
 	// notify parent when basic fields change
@@ -82,9 +96,11 @@
 						<span class="day-fold-chevron" class:open={day.open}>&#9654;</span>
 						<span class="day-summary">{day.value || `Day ${i + 1}`}</span>
 					</div>
-					<button class="btn btn-outline-danger btn-sm" type="button" on:click|stopPropagation={() => removeDay(day.id)} aria-label="Remove day">
-						✖
-					</button>
+					<div class="d-flex gap-1 align-items-center">
+						<button class="btn btn-outline-secondary btn-sm" type="button" on:click|stopPropagation={() => moveDay(i, -1)} disabled={i === 0} aria-label="Move day up">▲</button>
+						<button class="btn btn-outline-secondary btn-sm" type="button" on:click|stopPropagation={() => moveDay(i, 1)} disabled={i === days.length - 1} aria-label="Move day down">▼</button>
+						<button class="btn btn-outline-danger btn-sm" type="button" on:click|stopPropagation={() => removeDay(day.id)} aria-label="Remove day">✖</button>
+					</div>
 				</div>
 				{#if day.open}
 					<div class="p-2">

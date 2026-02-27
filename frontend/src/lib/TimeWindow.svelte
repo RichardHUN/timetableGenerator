@@ -1,5 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
+  import InfoTooltip from './InfoTooltip.svelte';
 
   export let times: string[] = [];
   const dispatch = createEventDispatcher();
@@ -48,6 +49,13 @@
 
   <div class="mt-2">
     <button class="btn btn-sm btn-outline-secondary" on:click={addTime} aria-label="Add start time">+ Add Time</button>
+    <InfoTooltip>
+      <h6 class="card-title mb-2">How to use Times</h6>
+      <ul class="mb-0 ps-3">
+        <li>Times represent start time</li>
+        <li>The end of the day is one hour after the last start time</li>
+      </ul>
+    </InfoTooltip>
   </div>
 </div>
 
