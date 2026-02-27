@@ -70,6 +70,10 @@
         return `${pad(t.hour)}:${pad(t.minute)}`;
     }
 
+    function fmtSlotLabel(hour: number): string {
+        return `${pad(hour)}:00\u2013${pad(hour + 1)}:00`;
+    }
+
     function getCourseRowspan(course: Course): number {
         const startMins = course.startTime.hour * 60 + course.startTime.minute;
         const endMins = course.endTime.hour * 60 + course.endTime.minute;
@@ -226,7 +230,7 @@
                             <tbody>
                                 {#each timeSlots as hour}
                                     <tr>
-                                        <td class="time-label">{pad(hour)}:00</td>
+                                        <td class="time-label">{fmtSlotLabel(hour)}</td>
                                         {#each days as day}
                                             {#if !skippedCells.has(`${day}:${hour}`)}
                                                 {#if courseMap.has(`${day}:${hour}`)}
