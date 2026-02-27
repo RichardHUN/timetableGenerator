@@ -12,6 +12,7 @@
     let timetables: TimetableListItem[] = [];
     let loading = true;
     let pageError: string | null = null;
+    let pageErrorUnauthorized = false;
     let actionError: string | null = null;
 
     // Delete modal
@@ -36,13 +37,15 @@
     onMount(async () => {
         const token = localStorage.getItem('token');
         if (!token) {
-            pageError = 'You must be logged in to view your timetables. Please log in and try again.';
+            pageError = 'You must be logged in to view your timetables.';
+            pageErrorUnauthorized = true;
             loading = false;
             return;
         }
         const res = await getTimetables(token);
         if (res.error) {
             pageError = res.error;
+            pageErrorUnauthorized = res.unauthorized ?? false;
         } else {
             timetables = res.data ?? [];
         }
@@ -103,7 +106,12 @@
             <h1 class="h2 mb-4 page-title">My Timetables</h1>
 
             {#if pageError}
-                <div class="alert alert-warning">{pageError}</div>
+                <div class="alert alert-warning">
+                    {pageError}
+                    {#if pageErrorUnauthorized}
+                        <a href="/login" class="alert-link ms-1">Go to login</a>
+                    {/if}
+                </div>
             {:else if loading}
                 <div class="text-center py-5">
                     <div class="spinner-border text-accent" role="status">

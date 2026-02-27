@@ -40,6 +40,16 @@
 		days = days.map(d => d.id === id ? { ...d, open: !d.open } : d);
 	}
 
+	function moveDay(from: number, dir: -1 | 1) {
+		const to = from + dir;
+		if (to < 0 || to >= days.length) return;
+		const result = days.slice();
+		const [item] = result.splice(from, 1);
+		result.splice(to, 0, item);
+		days = result;
+		dispatch('change', { roomNumber, capacity, days });
+	}
+
 	// notify parent when basic fields change
 	$: dispatch('change', { roomNumber, capacity, days });
 </script>
@@ -86,9 +96,11 @@
 						<span class="day-fold-chevron" class:open={day.open}>&#9654;</span>
 						<span class="day-summary">{day.value || `Day ${i + 1}`}</span>
 					</div>
-					<button class="btn btn-outline-danger btn-sm" type="button" on:click|stopPropagation={() => removeDay(day.id)} aria-label="Remove day">
-						✖
-					</button>
+					<div class="d-flex gap-1 align-items-center">
+						<button class="btn btn-outline-secondary btn-sm" type="button" on:click|stopPropagation={() => moveDay(i, -1)} disabled={i === 0} aria-label="Move day up">▲</button>
+						<button class="btn btn-outline-secondary btn-sm" type="button" on:click|stopPropagation={() => moveDay(i, 1)} disabled={i === days.length - 1} aria-label="Move day down">▼</button>
+						<button class="btn btn-outline-danger btn-sm" type="button" on:click|stopPropagation={() => removeDay(day.id)} aria-label="Remove day">✖</button>
+					</div>
 				</div>
 				{#if day.open}
 					<div class="p-2">

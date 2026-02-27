@@ -76,12 +76,15 @@ export interface TimetableResponse {
 
 // ─── Timetable API helpers ───────────────────────────────────────────────────
 
-export async function getTimetables(token: string): Promise<{ data?: TimetableListItem[]; error?: string }> {
+export async function getTimetables(token: string): Promise<{ data?: TimetableListItem[]; error?: string; unauthorized?: boolean }> {
 	try {
 		const response = await fetch(`${PUBLIC_API_URL}/api/timetables`, {
 			headers: { Authorization: `Bearer ${token}` }
 		});
 		if (!response.ok) {
+			if (response.status === 401 || response.status === 403) {
+				return { error: 'Your session has expired or is invalid. Please log in again.', unauthorized: true };
+			}
 			const err = await response.json().catch(() => ({ message: 'Failed to fetch timetables' }));
 			return { error: err.message || `Server error ${response.status}` };
 		}

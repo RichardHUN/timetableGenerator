@@ -114,6 +114,27 @@
         preferences = preferences.filter((p) => p.id !== id);
     }
 
+    function moveItem<T>(arr: T[], from: number, dir: -1 | 1): T[] {
+        const to = from + dir;
+        if (to < 0 || to >= arr.length) return arr;
+        const result = arr.slice();
+        const [item] = result.splice(from, 1);
+        result.splice(to, 0, item);
+        return result;
+    }
+
+    function movePlannedCourse(i: number, dir: -1 | 1) {
+        plannedCourses = moveItem(plannedCourses, i, dir);
+    }
+
+    function movePreference(i: number, dir: -1 | 1) {
+        preferences = moveItem(preferences, i, dir);
+    }
+
+    function moveRoom(i: number, dir: -1 | 1) {
+        rooms = moveItem(rooms, i, dir);
+    }
+
     function onRoomChange(i: number, e: CustomEvent) {
         rooms[i].data = { ...e.detail, initialDaysData: rooms[i].data?.initialDaysData };
         // trigger reactivity
@@ -405,7 +426,11 @@
                                     <span class="fold-chevron" class:open={course.open}>&#9654;</span>
                                     <span class="item-summary">{course.data.name || 'New Course'}{course.data.presenterName ? ' — ' + course.data.presenterName : ''}</span>
                                 </div>
-                                <button class="btn btn-sm btn-outline-danger" type="button" on:click|stopPropagation={() => removePlannedCourse(course.id)} aria-label="Remove course">Remove</button>
+                                <div class="d-flex gap-1 align-items-center">
+                                    <button class="btn btn-sm btn-outline-secondary" type="button" on:click|stopPropagation={() => movePlannedCourse(i, -1)} disabled={i === 0} aria-label="Move course up">▲</button>
+                                    <button class="btn btn-sm btn-outline-secondary" type="button" on:click|stopPropagation={() => movePlannedCourse(i, 1)} disabled={i === plannedCourses.length - 1} aria-label="Move course down">▼</button>
+                                    <button class="btn btn-sm btn-outline-danger" type="button" on:click|stopPropagation={() => removePlannedCourse(course.id)} aria-label="Remove course">Remove</button>
+                                </div>
                             </div>
                             {#if course.open}
                                 <div class="p-2">
@@ -448,7 +473,11 @@
                                     <span class="fold-chevron" class:open={pref.open}>&#9654;</span>
                                     <span class="item-summary">{pref.data.presenterName || 'New Preference'}{pref.data.constraint ? ' — ' + pref.data.constraint : ''}</span>
                                 </div>
-                                <button class="btn btn-sm btn-outline-danger" type="button" on:click|stopPropagation={() => removePreference(pref.id)} aria-label="Remove preference">Remove</button>
+                                <div class="d-flex gap-1 align-items-center">
+                                    <button class="btn btn-sm btn-outline-secondary" type="button" on:click|stopPropagation={() => movePreference(i, -1)} disabled={i === 0} aria-label="Move preference up">▲</button>
+                                    <button class="btn btn-sm btn-outline-secondary" type="button" on:click|stopPropagation={() => movePreference(i, 1)} disabled={i === preferences.length - 1} aria-label="Move preference down">▼</button>
+                                    <button class="btn btn-sm btn-outline-danger" type="button" on:click|stopPropagation={() => removePreference(pref.id)} aria-label="Remove preference">Remove</button>
+                                </div>
                             </div>
                             {#if pref.open}
                                 <div class="p-2">
@@ -490,7 +519,11 @@
                                     <span class="fold-chevron" class:open={room.open}>&#9654;</span>
                                     <span class="item-summary">{room.data?.roomNumber || 'New Room'}{room.data?.capacity ? ' — capacity: ' + room.data.capacity : ''}</span>
                                 </div>
-                                <button class="btn btn-sm btn-outline-danger" type="button" on:click|stopPropagation={() => removeRoom(room.id)} aria-label="Remove room">Remove</button>
+                                <div class="d-flex gap-1 align-items-center">
+                                    <button class="btn btn-sm btn-outline-secondary" type="button" on:click|stopPropagation={() => moveRoom(i, -1)} disabled={i === 0} aria-label="Move room up">▲</button>
+                                    <button class="btn btn-sm btn-outline-secondary" type="button" on:click|stopPropagation={() => moveRoom(i, 1)} disabled={i === rooms.length - 1} aria-label="Move room down">▼</button>
+                                    <button class="btn btn-sm btn-outline-danger" type="button" on:click|stopPropagation={() => removeRoom(room.id)} aria-label="Remove room">Remove</button>
+                                </div>
                             </div>
                             {#if room.open}
                                 <div class="p-2">
