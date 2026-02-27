@@ -115,7 +115,7 @@
     }
 
     function onRoomChange(i: number, e: CustomEvent) {
-        rooms[i].data = e.detail;
+        rooms[i].data = { ...e.detail, initialDaysData: rooms[i].data?.initialDaysData };
         // trigger reactivity
         rooms = rooms.slice();
     }
@@ -188,23 +188,6 @@
         }
     }
 
-        // persist last result so the /generate/result page can read it
-            try {
-            if (generateResult) {
-                sessionStorage.setItem('lastGenerateResult', JSON.stringify(generateResult));
-            }
-        } catch (e) {
-            // ignore storage errors
-        }
-
-        // automatically navigate to the result page when a result is available
-        try {
-            if (generateResult) {
-                await goto('/result');
-            }
-        } catch (e) {
-            // ignore navigation errors
-        }
     function exportJSON() {
         const payload = {
             rooms: rooms.map((r) => {
@@ -382,6 +365,9 @@
                                     <a class="btn btn-sm btn-outline-secondary" href="/result">Open result page</a>
                                 </div>
                             </div>
+                        </div>
+                    {/if}
+
                     {#if loadSuccess}
                         <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
                             {loadSuccess}
