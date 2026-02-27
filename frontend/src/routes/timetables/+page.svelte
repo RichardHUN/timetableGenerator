@@ -12,6 +12,7 @@
     let timetables: TimetableListItem[] = [];
     let loading = true;
     let pageError: string | null = null;
+    let pageErrorUnauthorized = false;
     let actionError: string | null = null;
 
     // Delete modal
@@ -36,13 +37,15 @@
     onMount(async () => {
         const token = localStorage.getItem('token');
         if (!token) {
-            pageError = 'You must be logged in to view your timetables. Please log in and try again.';
+            pageError = 'You must be logged in to view your timetables.';
+            pageErrorUnauthorized = true;
             loading = false;
             return;
         }
         const res = await getTimetables(token);
         if (res.error) {
             pageError = res.error;
+            pageErrorUnauthorized = res.unauthorized ?? false;
         } else {
             timetables = res.data ?? [];
         }
@@ -74,6 +77,19 @@
         renamingId = null;
     }
 
+    function moveItem<T>(arr: T[], from: number, dir: -1 | 1): T[] {
+        const to = from + dir;
+        if (to < 0 || to >= arr.length) return arr;
+        const result = arr.slice();
+        const [item] = result.splice(from, 1);
+        result.splice(to, 0, item);
+        return result;
+    }
+
+    function moveTimetable(i: number, dir: -1 | 1) {
+        timetables = moveItem(timetables, i, dir);
+    }
+
     function openDeleteModal(item: TimetableListItem) {
         pendingDeleteId = item.id;
         pendingDeleteName = item.name;
@@ -103,7 +119,12 @@
             <h1 class="h2 mb-4 page-title">My Timetables</h1>
 
             {#if pageError}
-                <div class="alert alert-warning">{pageError}</div>
+                <div class="alert alert-warning">
+                    {pageError}
+                    {#if pageErrorUnauthorized}
+                        <a href="/login" class="alert-link ms-1">Go to login</a>
+                    {/if}
+                </div>
             {:else if loading}
                 <div class="text-center py-5">
                     <div class="spinner-border text-accent" role="status">
@@ -122,7 +143,7 @@
                     <div class="alert alert-info">No timetables yet. <a href="/generate">Generate one!</a></div>
                 {:else}
                     <ul class="list-group list-group-flush">
-                        {#each timetables as item (item.id)}
+                        {#each timetables as item, i (item.id)}
                             <li class="list-group-item timetable-row">
                                 <div class="d-flex align-items-center gap-3 flex-wrap">
                                     <!-- Name / rename input -->
@@ -143,6 +164,8 @@
                                     </div>
                                     <!-- Actions -->
                                     <div class="d-flex gap-2 flex-shrink-0">
+                                        <button class="btn btn-sm btn-outline-secondary" type="button" on:click={() => moveTimetable(i, -1)} disabled={i === 0} aria-label="Move up">▲</button>
+                                        <button class="btn btn-sm btn-outline-secondary" type="button" on:click={() => moveTimetable(i, 1)} disabled={i === timetables.length - 1} aria-label="Move down">▼</button>
                                         <a class="btn btn-sm btn-primary" href="/result?id={item.id}">Open</a>
                                         <button class="btn btn-sm btn-outline-secondary" type="button" on:click={() => startRename(item)} title="Rename">
                                             ✏️
