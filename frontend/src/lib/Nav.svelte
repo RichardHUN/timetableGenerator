@@ -3,6 +3,7 @@
     import { browser } from '$app/environment';
 
     let theme = $state<'dark' | 'light'>('dark');
+    let loggedIn = $state(false);
 
     function applyTheme(t: 'dark' | 'light') {
         theme = t;
@@ -25,6 +26,8 @@
         } else {
             applyTheme('dark');
         }
+
+        loggedIn = localStorage.getItem('token') !== null;
     });
 </script>
 
@@ -47,12 +50,20 @@
                 <li class="nav-item">
                     <a href="/timetables" class="nav-link">Timetables</a>
                 </li>
-                <li class="nav-item">
-                    <a href="/login" class="nav-link">Login</a>
-                </li>
-                <li class="nav-item">
-                    <a href="/register" class="btn btn-primary">Register</a>
-                </li>
+
+                {#if !loggedIn}
+                    <li class="nav-item">
+                        <a href="/login" class="nav-link">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/register" class="btn btn-primary">Register</a>
+                    </li>
+                {:else}
+                    <button class="btn btn-outline-danger" onclick={() => { localStorage.removeItem('token'); loggedIn = false; window.location.href = '/'; }}>
+                        Logout
+                    </button>   
+                {/if}
+
                 <li class="nav-item">
                     <button class="btn btn-outline-secondary" aria-label="Toggle theme" onclick={toggleTheme}>
                         {#if theme === 'dark'}
