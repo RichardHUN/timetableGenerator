@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * Service class for managing user information and authentication.
+ */
 @Service
 @AllArgsConstructor
 public class UserInfoService implements UserDetailsService {

@@ -7,6 +7,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 
+/**
+ * UserInfoDetails class that implements UserDetails for Spring Security.
+ */
 @Getter
 public class UserInfoDetails implements UserDetails {
 
