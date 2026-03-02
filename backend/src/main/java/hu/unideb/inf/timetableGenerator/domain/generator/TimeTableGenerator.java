@@ -14,11 +14,30 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * This class it responsible for generating the timetables.
+ * <p></p>
+ * How it works:
+ * The generator picks the first Planned Course, then the first available time slot
+ * from this global week.
+ * <br>
+ * Then it picks the corresponding room and time window (meanwhile performs checks), then if all checks were
+ * passed, occupies the time slot, creates the Course object from the Planned Course
+ * and moves to the next planned course.
+ * <br>
+ * This is one cycle of one candidate.
+ * <br>
+ * The generator creates many candidates, and the best one is chosen.
+ * <br>
+ * The candidates are ordered by the number of preference points broken.
+ * <br>
+ * If a candidate with 0 preference points broken if found, the generator stops and returns it.
+ */
+@Data
 @Slf4j
 @Component
-@Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class TimeTableGenerator {
 
     private static final int MAX_SOLUTIONS = 100;
@@ -187,33 +206,33 @@ public class TimeTableGenerator {
 
         for (Course course : courses) {
             Room room = finalRooms.stream()
-                    .filter(r -> r.getRoomNumber().equals(course.getRoom().getRoomNumber()))
+                    .filter(r -> r.getRoomNumber().equals(course.room().getRoomNumber()))
                     .findFirst()
                     .orElseThrow();
 
-            room.occupy(course.getDay(), course.getStartTime(), course.getEndTime());
+            room.occupy(course.day(), course.startTime(), course.endTime());
         }
 
         List<Course> rebuiltCourses = new ArrayList<>();
         for (Course course : courses) {
             Room finalRoom = finalRooms.stream()
-                    .filter(r -> r.getRoomNumber().equals(course.getRoom().getRoomNumber()))
+                    .filter(r -> r.getRoomNumber().equals(course.room().getRoomNumber()))
                     .findFirst()
                     .orElseThrow();
 
             Day finalDay = finalRoom.getWeek().getDays().stream()
-                    .filter(d -> d.getName().equals(course.getDay().getName()))
+                    .filter(d -> d.getName().equals(course.day().getName()))
                     .findFirst()
                     .orElseThrow();
 
             Course rebuiltCourse = Course.builder()
                     .day(finalDay)
-                    .startTime(course.getStartTime())
-                    .endTime(course.getEndTime())
-                    .presenterName(course.getPresenterName())
-                    .name(course.getName())
+                    .startTime(course.startTime())
+                    .endTime(course.endTime())
+                    .presenterName(course.presenterName())
+                    .name(course.name())
                     .room(finalRoom)
-                    .numberOfListeners(course.getNumberOfListeners())
+                    .numberOfListeners(course.numberOfListeners())
                     .build();
 
             rebuiltCourses.add(rebuiltCourse);

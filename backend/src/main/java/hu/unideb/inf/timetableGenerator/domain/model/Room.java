@@ -4,6 +4,12 @@ import lombok.*;
 
 import java.util.Objects;
 
+/**
+ * Represents a room, with its room number, capacity, and availability throughout the week. <br>
+ * The availability is represented by a {@link Week} object, which contains the available time windows for each day of the week.
+ * <p></p>
+ * This can be thought of as the timetable on the door of the room, with no courses held in it.
+ */
 @Data
 @ToString
 @Builder(toBuilder = true)

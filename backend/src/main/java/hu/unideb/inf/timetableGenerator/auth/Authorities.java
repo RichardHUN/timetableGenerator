@@ -6,6 +6,9 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A class that provides methods to get GrantedAuthority objects based on authority strings.
+ */
 public class Authorities {
 
     private enum AuthorityTypes{

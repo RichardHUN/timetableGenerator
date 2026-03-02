@@ -3,6 +3,9 @@ package hu.unideb.inf.timetableGenerator.domain.runner.parser;
 import hu.unideb.inf.timetableGenerator.domain.model.Preference;
 import hu.unideb.inf.timetableGenerator.domain.runner.Main;
 
+/**
+ * Parses constraints from command line arguments and adds them to the main preferences.
+ */
 public class ConstraintParser implements ArgParser {
     private final Main main;
 

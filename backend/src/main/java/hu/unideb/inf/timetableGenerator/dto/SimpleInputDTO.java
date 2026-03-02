@@ -5,6 +5,9 @@ import lombok.*;
 
 import java.util.*;
 
+/**
+ * Simpler version of the {@link InputDTO}, used from frontend.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

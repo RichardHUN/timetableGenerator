@@ -15,6 +15,10 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
 
+/**
+ * Loads {@code input.txt} from the resources folder, reads the
+ * arguments from it, and generates the timetable.
+ */
 @Getter
 @Log4j2
 public class MainFile implements Main {

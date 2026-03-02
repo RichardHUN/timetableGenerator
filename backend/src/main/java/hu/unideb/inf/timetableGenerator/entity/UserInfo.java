@@ -12,6 +12,9 @@ import org.springframework.security.core.GrantedAuthority;
 
 import java.util.List;
 
+/**
+ * Entity representing user information, including name, email, password, and roles for authentication and authorization purposes.
+ */
 @Entity
 @Data
 @Builder

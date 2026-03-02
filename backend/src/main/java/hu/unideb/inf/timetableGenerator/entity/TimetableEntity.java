@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * Entity representing a timetable, associated with a user and containing the timetable data in JSON format.
+ */
 @Entity
 @Table(name = "timetable")
 @Data

@@ -2,33 +2,24 @@ package hu.unideb.inf.timetableGenerator.domain.model;
 
 import javafx.util.Pair;
 import lombok.Builder;
-import lombok.Getter;
 
 import java.util.List;
 import java.util.function.Predicate;
 
-@Getter
+/**
+ * Represents a course in the timetable.
+ * Contains information about the day, time, name, room, presenter and number of listeners.
+ * Also contains static methods to check for collisions between courses.
+ * <p></p>
+ * Not to be confused with {@link PlannedCourse}. Planned Courses don't yet have a place in a timetable.
+ */
 @Builder
-public class Course {
+public record Course(Day day, Time startTime, Time endTime, String name, Room room, String presenterName,
+                     int numberOfListeners) {
 
-    private final Day day;
-    private final Time startTime;
-    private final Time endTime;
-    private final String name;
-    private final Room room;
-    private final String presenterName;
-    private final int numberOfListeners;
-
-    public Course(Day day, Time startTime, Time endTime, String name, Room room, String presenterName, int numberOfListeners) {
-        if ( numberOfListeners > room.getCapacity() )
+    public Course {
+        if (numberOfListeners > room.getCapacity())
             throw new IllegalArgumentException("Number of listeners cannot be more than room capacity.");
-        this.day = day;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.name = name;
-        this.room = room;
-        this.presenterName = presenterName;
-        this.numberOfListeners = numberOfListeners;
     }
 
     /**
@@ -41,8 +32,8 @@ public class Course {
         public boolean test(List<Course> courses) {
             Predicate<Pair<Course, Course>> collisionChecker = new noCollision();
             Pair<Course, Course> coursePair;
-            for (int i = 0; i < courses.size()-1; i++) {
-                for (int j = i+1; j < courses.size(); j++) {
+            for (int i = 0; i < courses.size() - 1; i++) {
+                for (int j = i + 1; j < courses.size(); j++) {
                     coursePair = new Pair<>(courses.get(i), courses.get(j));
                     if (!collisionChecker.test(coursePair)) {
                         return false;
@@ -70,7 +61,7 @@ public class Course {
             Course first = coursePair.getKey();
             Course second = coursePair.getValue();
 
-            if (!first.getRoom().equals(second.getRoom()) || !first.getDay().equals(second.getDay())) {
+            if (!first.room().equals(second.room()) || !first.day().equals(second.day())) {
                 return true;
             }
 
@@ -88,7 +79,7 @@ public class Course {
             Course first = coursePair.getKey();
             Course second = coursePair.getValue();
 
-            if (!first.getPresenterName().equals(second.getPresenterName()) || !first.getDay().equals(second.getDay())) {
+            if (!first.presenterName().equals(second.presenterName()) || !first.day().equals(second.day())) {
                 return true;
             }
 

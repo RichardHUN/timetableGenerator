@@ -2,17 +2,16 @@ package hu.unideb.inf.timetableGenerator.dto;
 
 import hu.unideb.inf.timetableGenerator.domain.model.Course;
 import hu.unideb.inf.timetableGenerator.domain.model.Week;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 import java.util.List;
 
-@Getter
-@AllArgsConstructor
-public class OutputDTO {
-
-    private final Week week;
-    private final List<Course> courses;
+/**
+ * Represents the output of the timetable generation process, containing the list of planned courses
+ * and the same week object as the input, which is used for timetable visualization.
+ * @param week
+ * @param courses
+ */
+public record OutputDTO(Week week, List<Course> courses) {
 
     @Override
     public String toString() {

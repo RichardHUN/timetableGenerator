@@ -52,28 +52,28 @@ final class ConstraintTypes {
             case NO_CLASSES_ON_DAY -> {
                 String dayName = remainingParams[0];
                 yield courses -> courses.stream()
-                        .filter(course -> course.getPresenterName().equals(presenterName))
-                        .noneMatch(course -> course.getDay().getName().equals(dayName));
+                        .filter(course -> course.presenterName().equals(presenterName))
+                        .noneMatch(course -> course.day().getName().equals(dayName));
             }
             case MAX_CLASSES_PER_DAY -> {
                 int maxClasses = Integer.parseInt(remainingParams[0]);
                 yield courses -> courses.stream()
-                        .filter(course -> course.getPresenterName().equals(presenterName))
-                        .collect(Collectors.groupingBy(course -> course.getDay().getName()))
+                        .filter(course -> course.presenterName().equals(presenterName))
+                        .collect(Collectors.groupingBy(course -> course.day().getName()))
                         .values().stream()
                         .noneMatch(list -> list.size() > maxClasses);
             }
             case NO_CLASSES_AFTER -> {
                 Time timeAfter = Time.of(remainingParams[0] + ":" + remainingParams[1]);
                 yield courses -> courses.stream()
-                        .filter(course -> course.getPresenterName().equals(presenterName))
-                        .allMatch(course -> course.getEndTime().compareTo(timeAfter) <= 0);
+                        .filter(course -> course.presenterName().equals(presenterName))
+                        .allMatch(course -> course.endTime().compareTo(timeAfter) <= 0);
             }
             case NO_CLASSES_BEFORE -> {
                 Time timeBefore = Time.of(remainingParams[0] + ":" + remainingParams[1]);
                 yield courses -> courses.stream()
-                        .filter(course -> course.getPresenterName().equals(presenterName))
-                        .allMatch(course -> course.getStartTime().compareTo(timeBefore) >= 0);
+                        .filter(course -> course.presenterName().equals(presenterName))
+                        .allMatch(course -> course.startTime().compareTo(timeBefore) >= 0);
             }
         };
     }

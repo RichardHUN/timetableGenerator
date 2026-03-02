@@ -6,6 +6,9 @@ import hu.unideb.inf.timetableGenerator.entity.UserInfo;
 
 import java.util.List;
 
+/**
+ * This interface defines the contract for managing timetables, including retrieval, creation, deletion, and renaming of timetables.
+ */
 public interface TimetablesService {
 
     TimetableEntity getTimetable(int id) throws IllegalStateException;

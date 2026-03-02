@@ -8,17 +8,17 @@ import lombok.*;
 
 import java.util.List;
 
+/**
+ * DTO class that defines the input of the timetable generation.
+ * The week object is calculated from the planned courses,
+ * so it is not necessary to provide it in the input, for that use
+ * {@link SimpleInputDTO}.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
 @Data
 public class InputDTO {
-    /**
-     * DTO class that defines the input of the timetable generation.
-     * The week object is calculated from the planned courses,
-     * so it is not necessary to provide it in the input, for that use
-     * {@link SimpleInputDTO}.
-     */
 
     private Week week;
     private List<Room> rooms;

@@ -3,6 +3,9 @@ package hu.unideb.inf.timetableGenerator.domain.runner.parser;
 import hu.unideb.inf.timetableGenerator.domain.model.PlannedCourse;
 import hu.unideb.inf.timetableGenerator.domain.runner.Main;
 
+/**
+ * Parses the arguments for a Planned Course and adds it to the list of Planned Courses in the main class.
+ */
 public class CourseArgParser implements ArgParser {
     private final Main main;
 

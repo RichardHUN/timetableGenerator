@@ -6,6 +6,9 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.Objects;
 
+/**
+ * Represents a start hour: HH:MM format. Has methods to compare times and to add hours and minutes.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -59,11 +62,17 @@ public class Time implements Comparable<Time> {
                 .build();
     }
 
-    static LinkedList<Time> from8To20() {
+    public static LinkedList<Time> from8To20() {
         return fromAToB(8, 20);
     }
 
-    static LinkedList<Time> fromAToB(int startHour, int endHour) {
+    /**
+     * Generates a TimeWindow, starting from startHour, incrementing by 1 hour, until endHour. Both startHour and endHour are inclusive.
+     * @param startHour the first start hour of the TimeWindow, inclusive
+     * @param endHour the start last hour of the TimeWindow, inclusive
+     * @return a TimeWindow filled with Time objects from startHour to endHour, incrementing by 1 hour
+     */
+    public static LinkedList<Time> fromAToB(int startHour, int endHour) {
         LinkedList<Time> times = new LinkedList<>();
         for (int hour = startHour; hour <= endHour; hour++) {
             times.add(Time.builder().hour(hour).minute(0).build());

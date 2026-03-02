@@ -8,6 +8,10 @@ import hu.unideb.inf.timetableGenerator.domain.runner.Main;
 
 import java.util.*;
 
+/**
+ * Parses the arguments related to rooms and their available time windows, and adds the parsed rooms to the main class's list of rooms.
+ * Also combines the available time windows of all rooms to update the main class's week with
+ */
 public class RoomArgParser implements ArgParser {
     private final Main main;
 

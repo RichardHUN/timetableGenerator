@@ -5,6 +5,10 @@ import lombok.*;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Contains the name of the day and the available time windows in that day,
+ * represented as a {@link Week} object.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -12,10 +16,6 @@ import java.util.List;
 @EqualsAndHashCode
 @Builder(toBuilder = true)
 public class Day implements Cloneable {
-    /**
-     * Contains the email of the day and the available time windows in that day,
-     * represented as a {@link Week} object.
-     */
 
     private String name;
     /**
@@ -31,7 +31,7 @@ public class Day implements Cloneable {
 
     /**
      * Generates a {@link Day}, that starts at 8:00 and ends at 20:00, with no breaks.
-     * @param name the email of the day
+     * @param name the name of the day
      */
     public Day(String name) {
         this.name = name;
@@ -39,6 +39,11 @@ public class Day implements Cloneable {
         this.availableWindows.add(Time.from8To20());
     }
 
+    /**
+     * Removes the specified time range from the available time windows of the day. Increments by 1 hour between them.
+     * @param startTime the first time to be removed
+     * @param endTime the last time to be removed (exclusive) - will stop before this - uses isEarlierThan()
+     */
     public void occupyTime(Time startTime, Time endTime) {
         for( Time time = startTime; time.isEarlierThan(endTime); time = time.plus(1, 0) ) {
             for( int i = 0; i < availableWindows.size(); i++ ) {
