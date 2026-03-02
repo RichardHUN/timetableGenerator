@@ -1,6 +1,6 @@
 # Timetable Generator Backend
 
-This is the backend service for the Timetable Generator application, a Spring Boot project that generates timetables based on input data such as available rooms, courses, and presenter preferences.
+This is the backend service for the Timetable Generator application, a Spring Boot project that generates timetables based on input data such as available **rooms**, **courses**, and presenter **preferences**.
 
 ## Overview
 
@@ -45,7 +45,7 @@ java -jar target/timetableGenerator-0.0.1-SNAPSHOT.jar
 The API is documented with OpenAPI and can be accessed via Swagger UI when the application is running.
 
 - **OpenAPI JSON**: `http://localhost:8080/v3/api-docs`
-- **Swagger UI**: `http://localhost:8080/swagger-ui/index.html`
+- **Swagger UI**: `http://localhost:8080/swagger`
 
 ## API Endpoints
 
@@ -56,24 +56,27 @@ The API is documented with OpenAPI and can be accessed via Swagger UI when the a
 
 ### Timetable Generation
 
-- **GET /api/generate**: Generate a timetable based on input data. *Needs auth*.
+- **GET /api/generate**: Generate a timetable based on input data. *Needs auth. **Example input JSONs available in input folder:***
+   - [medium input](../input/input-md.json)
+   - [large input](../input/input-lg.json)
 
-## Example Usage
 
-1. Register a new user:
-   ```bash
-   curl -X POST http://localhost:8080/api/auth/register -H "Content-Type: application/json" -d '{"username": "testuser", "password": "password"}'
-   ```
+## Testing the API with Postman
 
-2. Login to obtain a JWT token:
-   ```bash
-   curl -X POST http://localhost:8080/api/auth/login -H "Content-Type: application/json" -d '{"username": "testuser", "password": "password"}'
-   ```
+- **Import the OpenAPI JSON:**
+   - Start the backend (defaults to `http://localhost:8080`).
+   - In Postman choose `File > Import` → `Link` and paste `http://localhost:8080/v3/api-docs`, or download the OpenAPI JSON and import the file.
+   - Postman will create a new collection based on the OpenAPI spec containing requests for each endpoint.
 
-3. Generate a timetable (replace `{{token}}` with the actual token):
-   ```bash
-   curl -X GET http://localhost:8080/api/generate -H "Authorization: Bearer {{token}}" -H "Content-Type: application/json" -d @input.json
-   ```
+- **Authentication (JWT):**
+   - Create a Postman environment with variables `baseUrl` = `http://localhost:8080` and `token` (empty).
+   - Use `POST /api/auth/login` to obtain a token. Set the `token` variable in the environment with the token value from the login response.
+
+   - On protected requests add the `token` environment variable to the `Auth`/`Bearer Token` section.
+
+This process creates a Postman collection from the OpenAPI JSON and lets you attach example requests/responses for each endpoint and response code.
+
+---
 
 ## Troubleshooting
 
@@ -81,3 +84,22 @@ The API is documented with OpenAPI and can be accessed via Swagger UI when the a
 - **Port conflicts**: If port 8080 is in use, update the port in `application.yaml` and restart the application.
 
 ---
+
+## How it works
+The user's inputted rooms' weeks get combined into one big **global week**. This week object
+contains all available time slots, not considering the rooms they are from. 
+
+
+The **generator** picks the first **Planned Course**, then the first available time slot 
+from this **global week**.  
+Then it picks
+the corresponding room and time window *(meanwhile performs checks)*, then if all checks were
+passed, occupies the time slot, creates the **Course** object from the **Planned Course**
+and moves to the next planned course.
+
+This is one cycle of one candidate.  
+The generator creates many candidates, and the best one is chosen.  
+The candidates are ordered by the number of **preference points** broken.  
+If a candidate with **0 preference points broken** if found, the generator stops and returns it.
+
+> *preference points* - the strictness of a preference

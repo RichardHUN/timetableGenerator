@@ -1,0 +1,340 @@
+{
+  "rooms": [
+    {
+      "roomNumber": "IF01",
+      "capacity": 200,
+      "week": {
+        "days": [
+          {
+            "name": "Monday",
+            "availableWindows": [
+              [
+                {
+                  "hour": 8,
+                  "minute": 0
+                },
+                {
+                  "hour": 9,
+                  "minute": 0
+                },
+                {
+                  "hour": 10,
+                  "minute": 0
+                },
+                {
+                  "hour": 11,
+                  "minute": 0
+                }
+              ],
+              [
+                {
+                  "hour": 13,
+                  "minute": 0
+                },
+                {
+                  "hour": 14,
+                  "minute": 0
+                },
+                {
+                  "hour": 15,
+                  "minute": 0
+                },
+                {
+                  "hour": 16,
+                  "minute": 0
+                },
+                {
+                  "hour": 17,
+                  "minute": 0
+                },
+                {
+                  "hour": 18,
+                  "minute": 0
+                },
+                {
+                  "hour": 19,
+                  "minute": 0
+                }
+              ]
+            ]
+          },
+          {
+            "name": "Tuesday",
+            "availableWindows": [
+              [
+                {
+                  "hour": 8,
+                  "minute": 0
+                },
+                {
+                  "hour": 9,
+                  "minute": 0
+                },
+                {
+                  "hour": 10,
+                  "minute": 0
+                },
+                {
+                  "hour": 11,
+                  "minute": 0
+                }
+              ],
+              [
+                {
+                  "hour": 13,
+                  "minute": 0
+                },
+                {
+                  "hour": 14,
+                  "minute": 0
+                },
+                {
+                  "hour": 15,
+                  "minute": 0
+                },
+                {
+                  "hour": 16,
+                  "minute": 0
+                },
+                {
+                  "hour": 17,
+                  "minute": 0
+                },
+                {
+                  "hour": 18,
+                  "minute": 0
+                },
+                {
+                  "hour": 19,
+                  "minute": 0
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "roomNumber": "IF204",
+      "capacity": 32,
+      "week": {
+        "days": [
+          {
+            "name": "Monday",
+            "availableWindows": [
+              [
+                {
+                  "hour": 8,
+                  "minute": 0
+                },
+                {
+                  "hour": 9,
+                  "minute": 0
+                },
+                {
+                  "hour": 10,
+                  "minute": 0
+                },
+                {
+                  "hour": 11,
+                  "minute": 0
+                }
+              ],
+              [
+                {
+                  "hour": 13,
+                  "minute": 0
+                },
+                {
+                  "hour": 14,
+                  "minute": 0
+                },
+                {
+                  "hour": 15,
+                  "minute": 0
+                },
+                {
+                  "hour": 16,
+                  "minute": 0
+                },
+                {
+                  "hour": 17,
+                  "minute": 0
+                },
+                {
+                  "hour": 18,
+                  "minute": 0
+                },
+                {
+                  "hour": 19,
+                  "minute": 0
+                }
+              ]
+            ]
+          },
+          {
+            "name": "Tuesday",
+            "availableWindows": [
+              [
+                {
+                  "hour": 8,
+                  "minute": 0
+                },
+                {
+                  "hour": 9,
+                  "minute": 0
+                },
+                {
+                  "hour": 10,
+                  "minute": 0
+                },
+                {
+                  "hour": 11,
+                  "minute": 0
+                }
+              ],
+              [
+                {
+                  "hour": 13,
+                  "minute": 0
+                },
+                {
+                  "hour": 14,
+                  "minute": 0
+                },
+                {
+                  "hour": 15,
+                  "minute": 0
+                },
+                {
+                  "hour": 16,
+                  "minute": 0
+                },
+                {
+                  "hour": 17,
+                  "minute": 0
+                },
+                {
+                  "hour": 18,
+                  "minute": 0
+                },
+                {
+                  "hour": 19,
+                  "minute": 0
+                },
+                {
+                  "hour": 20,
+                  "minute": 0
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "plannedCourses": [
+    {
+      "name": "Statistics",
+      "presenterName": "John Doe",
+      "numberOfListeners": 180,
+      "durationHours": 1,
+      "durationMinutes": 40
+    },
+    {
+      "name": "Programming Languages",
+      "presenterName": "Jane Doe",
+      "numberOfListeners": 180,
+      "durationHours": 1,
+      "durationMinutes": 40
+    },
+    {
+      "name": "Math L",
+      "presenterName": "James Doe",
+      "numberOfListeners": 28,
+      "durationHours": 1,
+      "durationMinutes": 30
+    },
+    {
+      "name": "Operating Systems L",
+      "presenterName": "Jessica Doe",
+      "numberOfListeners": 24,
+      "durationHours": 1,
+      "durationMinutes": 30
+    },
+    {
+      "name": "Web Development L",
+      "presenterName": "Josh Doe",
+      "numberOfListeners": 18,
+      "durationHours": 1,
+      "durationMinutes": 30
+    },
+    {
+      "name": "Statistics L",
+      "presenterName": "John Doe",
+      "numberOfListeners": 32,
+      "durationHours": 1,
+      "durationMinutes": 30
+    },
+    {
+      "name": "Programming Languages L",
+      "presenterName": "Jane Doe",
+      "numberOfListeners": 31,
+      "durationHours": 1,
+      "durationMinutes": 30
+    },
+    {
+      "name": "Math",
+      "presenterName": "James Doe",
+      "numberOfListeners": 195,
+      "durationHours": 1,
+      "durationMinutes": 40
+    },
+    {
+      "name": "Operating Systems",
+      "presenterName": "Jessica Doe",
+      "numberOfListeners": 140,
+      "durationHours": 1,
+      "durationMinutes": 40
+    },
+    {
+      "name": "Web Development",
+      "presenterName": "Josh Doe",
+      "numberOfListeners": 115,
+      "durationHours": 1,
+      "durationMinutes": 40
+    }
+  ],
+  "preferences": [
+    {
+      "strictness": 3,
+      "presenterName": "Josh Doe",
+      "constraint": "noClassesBefore",
+      "value": "10:00"
+    },
+    {
+      "strictness": 3,
+      "presenterName": "Josh Doe",
+      "constraint": "noClassesOnDay",
+      "value": "Monday"
+    },
+    {
+      "strictness": 3,
+      "presenterName": "Jessica Doe",
+      "constraint": "noClassesAfter",
+      "value": "18:00"
+    },
+    {
+      "strictness": 3,
+      "presenterName": "John Doe",
+      "constraint": "noClassesOnDay",
+      "value": "Monday"
+    },
+    {
+      "strictness": 3,
+      "presenterName": "Jane Doe",
+      "constraint": "maxClassesPerDay",
+      "value": 1
+    }
+  ]
+}
