@@ -23,8 +23,7 @@
     });
 
     function emitChange() {
-        // normalize strictness to number
-        dispatch('change', { strictness: Number(strictness), presenterName, constraint, value });
+        dispatch('change', { strictness, presenterName, constraint, value });
     }
 
     function onConstraintChange(e: Event) {
@@ -51,8 +50,10 @@
         emitChange();
     }
 
-    function onStrictnessChange() {
-        strictness = Number(strictnessStr);
+    function onStrictnessChange(e: Event) {
+        const val = (e.target as HTMLSelectElement).value;
+        strictnessStr = val;
+        strictness = Number(val);
         emitChange();
     }
 
