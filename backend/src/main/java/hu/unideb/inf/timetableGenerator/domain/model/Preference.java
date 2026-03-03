@@ -11,7 +11,7 @@ import java.util.function.Predicate;
 /**
  * Represent a constraint/preference of a presenter.
  * A constraint/preference can be described the following way:
- * {@code <presenterName>:<constraintName>:<param1>}
+ * {@code <strictness>:<presenterName>:<constraintName>:<param1>}
  * Current possible preferences:
  * <ul>
  *     <li>noClassesOnDay: {@code <dayName>}</li>
@@ -21,8 +21,8 @@ import java.util.function.Predicate;
  * </ul>
  * Example:
  * <ul>
- *     <li>{@code "James Doe:noClassesAfter:15:00"}</li>
- *     <li>{@code "Jane Doe:noClassesOnDay:Friday"}</li>
+ *     <li>{@code "1:James Doe:noClassesAfter:15:00"}</li>
+ *     <li>{@code "3:Jane Doe:noClassesOnDay:Friday"}</li>
  * </ul>
  */
 @NoArgsConstructor
