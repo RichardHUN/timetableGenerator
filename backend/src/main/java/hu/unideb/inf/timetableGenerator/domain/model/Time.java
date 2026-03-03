@@ -26,6 +26,16 @@ public class Time implements Comparable<Time> {
         return this.compareTo(time) < 0;
     }
 
+    public Time plus(Time time){
+        int newHour = this.hour + time.hour;
+        int newMinute = this.minute + time.minute;
+        if (newMinute >= 60) {
+            newHour += newMinute / 60;
+            newMinute = newMinute % 60;
+        }
+        return Time.of(newHour, newMinute);
+    }
+
     public Time plus(int hour, int minute) {
         int newHour = this.hour + hour;
         int newMinute = this.minute + minute;
